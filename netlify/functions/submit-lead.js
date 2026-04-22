@@ -134,19 +134,19 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body);
     const { deal_id, name, mobile, email, funding_table_requested, doc_urls } = body;
 
-    if (!deal_id || !name || !mobile || !email) {
+    if (!name || !mobile || !email) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields' }) };
     }
 
-    // Get deal details
-    const { data: deal, error: dealError } = await supabase
-      .from('deals')
-      .select('*')
-      .eq('id', deal_id)
-      .single();
-
-    if (dealError || !deal) {
-      return { statusCode: 404, body: JSON.stringify({ error: 'Deal not found' }) };
+    // Get deal details only if deal_id provided
+    let deal = null;
+    if (deal_id && deal_id !== 'website-enquiry') {
+      const { data: dealData } = await supabase
+        .from('deals')
+        .select('*')
+        .eq('id', deal_id)
+        .single();
+      deal = dealData;
     }
 
     // Save lead to Supabase
