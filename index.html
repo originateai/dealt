@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance Estimate | Dealt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:       #0D1B2E;
+      --blue:       #175CF5;
+      --blue-light: #D1DEFF;
+      --blue-mid:   #4A7FF7;
+      --dark-grey:  #69707F;
+      --mid-grey:   #BFC5D2;
+      --light-bg:   #F4F6FC;
+      --white:      #FFFFFF;
+      --error:      #E53935;
+      --success:    #1DB954;
+      --shadow-sm:  0 1px 4px rgba(23,92,245,0.08);
+      --shadow-md:  0 4px 24px rgba(23,92,245,0.1);
+      --shadow-lg:  0 8px 40px rgba(13,27,46,0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Rubik', sans-serif;
+      background: var(--light-bg);
+      color: var(--navy);
+      min-height: 100vh;
+    }
+
+    /* ─── LOADING ─── */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 16px;
+      background: var(--light-bg);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--blue-light);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      height: 300px;
+      overflow: hidden;
+      background: var(--navy);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.45;
+      transition: opacity 0.8s ease;
+    }
+
+    /* Fallback gradient when no image */
+    .hero-bg.no-image {
+      background: linear-gradient(135deg, #0D1B2E 0%, #175CF5 100%);
+      opacity: 1;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(13,27,46,0.92) 0%,
+        rgba(13,27,46,0.4) 55%,
+        rgba(13,27,46,0.15) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      padding: 22px 20px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-logo img {
+      height: 28px;
+      width: auto;
+      /* White-ify the logo on dark bg using filter */
+      filter: brightness(0) invert(1);
+    }
+
+    .hero-address-block {}
+
+    .hero-eyebrow {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--blue-light);
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+
+    .hero-address {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+      letter-spacing: -0.3px;
+    }
+
+    /* ─── MAIN ─── */
+    .main {
+      padding: 0 16px 130px;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* ─── CONTEXT BANNER ─── */
+    .context-banner {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin: 16px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      animation: fadeUp 0.4s ease 0.05s both;
+    }
+
+    .context-icon-wrap {
+      width: 38px;
+      height: 38px;
+      background: var(--blue-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .context-icon-wrap svg { width: 18px; height: 18px; color: var(--blue); }
+
+    .context-text {
+      font-size: 13px;
+      color: var(--dark-grey);
+      line-height: 1.55;
+      font-weight: 400;
+    }
+
+    /* ─── METRICS ─── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+      animation: fadeUp 0.4s ease 0.1s both;
+    }
+
+    .metric-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 18px 16px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--blue);
+      border-radius: 14px 0 0 14px;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--blue);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .metric-label svg { width: 13px; height: 13px; }
+
+    .metric-value {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+
+    .metric-sub {
+      font-size: 11px;
+      color: var(--mid-grey);
+      margin-top: 5px;
+      font-weight: 400;
+    }
+
+    /* ─── DEAL OVERVIEW ─── */
+    .detail-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+      animation: fadeUp 0.4s ease 0.15s both;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      letter-spacing: 0.3px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--blue-light);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .card-title svg { width: 15px; height: 15px; color: var(--blue); }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid #F0F2F8;
+    }
+
+    .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .detail-label { font-size: 13px; color: var(--dark-grey); font-weight: 400; }
+    .detail-value { font-size: 13px; font-weight: 600; color: var(--navy); }
+
+    /* ─── FUNDING TABLE ─── */
+    .funding-table-card {
+      background: var(--navy);
+      border-radius: 14px;
+      padding: 18px 16px;
+      margin-bottom: 12px;
+      display: none;
+      animation: fadeUp 0.35s ease both;
+    }
+
+    .funding-table-card.visible { display: block; }
+    .funding-table-card .card-title { color: var(--white); border-bottom-color: rgba(255,255,255,0.1); }
+    .funding-table-card .card-title svg { color: var(--blue-light); }
+
+    .funding-table { width: 100%; border-collapse: collapse; }
+
+    .funding-table th {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--blue-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: left;
+      padding: 0 0 10px;
+    }
+
+    .funding-table th:last-child, .funding-table td:last-child { text-align: right; }
+
+    .funding-table td {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      padding: 9px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .funding-table td:last-child { color: var(--white); font-weight: 600; }
+
+    .table-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      background: rgba(23,92,245,0.3);
+      color: var(--blue-light);
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    /* ─── LEAD FORM ─── */
+    .lead-form-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 20px 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+      animation: fadeUp 0.4s ease 0.2s both;
+    }
+
+    .form-header {
+      margin-bottom: 20px;
+    }
+
+    .form-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+      letter-spacing: -0.2px;
+    }
+
+    .form-header p {
+      font-size: 13px;
+      color: var(--dark-grey);
+      line-height: 1.5;
+    }
+
+    .form-group { margin-bottom: 12px; }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+      letter-spacing: 0.2px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--mid-grey);
+      border-radius: 10px;
+      font-family: 'Rubik', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--navy);
+      background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(23,92,245,0.1);
+    }
+
+    .form-input::placeholder { color: var(--mid-grey); }
+
+    /* ─── FUNDING TOGGLE ─── */
+    .funding-toggle {
+      border: 1.5px dashed var(--mid-grey);
+      border-radius: 10px;
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 12px;
+      user-select: none;
+    }
+
+    .funding-toggle:hover { border-color: var(--blue); background: #F6F9FF; }
+    .funding-toggle.active { border-color: var(--blue); background: #F0F5FF; border-style: solid; }
+
+    .toggle-box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--mid-grey);
+      border-radius: 5px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .funding-toggle.active .toggle-box {
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .toggle-check { display: none; }
+    .funding-toggle.active .toggle-check { display: block; }
+
+    .toggle-check svg { width: 12px; height: 12px; color: white; }
+
+    .toggle-content { flex: 1; }
+    .toggle-title { font-size: 13px; font-weight: 600; color: var(--navy); display: flex; align-items: center; gap: 7px; }
+    .toggle-sub { font-size: 12px; color: var(--dark-grey); margin-top: 2px; }
+
+    .free-pill {
+      background: #E8F5EC;
+      color: #1B7D3A;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ─── UPLOAD ─── */
+    .upload-area {
+      border: 1.5px dashed var(--mid-grey);
+      border-radius: 10px;
+      padding: 18px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .upload-area:hover, .upload-area.dragging {
+      border-color: var(--blue);
+      background: #F6F9FF;
+    }
+
+    .upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon-wrap {
+      width: 40px;
+      height: 40px;
+      background: var(--blue-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+    }
+
+    .upload-icon-wrap svg { width: 20px; height: 20px; color: var(--blue); }
+
+    .upload-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+    .upload-sub { font-size: 12px; color: var(--dark-grey); }
+
+    .file-list { margin-top: 10px; text-align: left; display: flex; flex-direction: column; gap: 6px; }
+
+    .file-pill {
+      background: var(--light-bg);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .file-pill-name { flex: 1; color: var(--navy); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-pill-size { color: var(--dark-grey); }
+    .file-pill-remove { cursor: pointer; color: var(--mid-grey); font-size: 16px; line-height: 1; transition: color 0.15s; }
+    .file-pill-remove:hover { color: var(--error); }
+
+    /* ─── SUBMIT BUTTON ─── */
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--blue);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-family: 'Rubik', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      letter-spacing: 0.2px;
+    }
+
+    .submit-btn:hover {
+      background: #1350D9;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(23,92,245,0.3);
+    }
+
+    .submit-btn:active { transform: translateY(0); box-shadow: none; }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .submit-arrow { transition: transform 0.2s; }
+    .submit-btn:hover .submit-arrow { transform: translateX(3px); }
+
+    /* ─── ERROR ─── */
+    .error-msg {
+      background: #FFF0F0;
+      color: var(--error);
+      border-radius: 8px;
+      padding: 10px 13px;
+      font-size: 13px;
+      margin-top: 10px;
+      display: none;
+      border-left: 3px solid var(--error);
+    }
+
+    .error-msg.visible { display: block; }
+
+    /* ─── SUCCESS ─── */
+    .success-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 40px 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      display: none;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .success-card.visible { display: block; }
+
+    .success-icon-wrap {
+      width: 64px;
+      height: 64px;
+      background: #E6F9ED;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .success-icon-wrap svg { width: 30px; height: 30px; color: var(--success); }
+
+    .success-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .success-sub {
+      font-size: 14px;
+      color: var(--dark-grey);
+      line-height: 1.65;
+    }
+
+    /* ─── ABOUT ─── */
+    .about-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 20px 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+      animation: fadeUp 0.4s ease 0.25s both;
+    }
+
+    .about-card p {
+      font-size: 13px;
+      color: var(--dark-grey);
+      line-height: 1.65;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .stat-box {
+      background: var(--light-bg);
+      border-radius: 10px;
+      padding: 13px 8px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--blue);
+      display: block;
+      letter-spacing: -0.5px;
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--dark-grey);
+      margin-top: 2px;
+    }
+
+    /* ─── STICKY BROKER CTA ─── */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(244,246,252,0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-top: 1px solid var(--blue-light);
+      padding: 12px 16px;
+      z-index: 100;
+    }
+
+    .sticky-inner {
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    .call-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--white);
+      border: 1.5px solid var(--mid-grey);
+      border-radius: 10px;
+      font-family: 'Rubik', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .call-btn:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+      box-shadow: 0 4px 16px rgba(23,92,245,0.12);
+    }
+
+    .call-icon {
+      width: 30px;
+      height: 30px;
+      background: var(--blue-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .call-icon svg { width: 14px; height: 14px; color: var(--blue); }
+
+    /* ─── NOT FOUND ─── */
+    .not-found {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .not-found .nf-icon {
+      width: 72px;
+      height: 72px;
+      background: var(--blue-light);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .not-found .nf-icon svg { width: 32px; height: 32px; color: var(--blue); }
+    .not-found h2 { font-size: 24px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+    .not-found p { font-size: 14px; color: var(--dark-grey); line-height: 1.6; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (min-width: 540px) {
+      .hero { height: 340px; }
+      .hero-address { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADING -->
+  <div id="loadingState" class="loading-state">
+    <div class="spinner"></div>
+    <p style="font-size:13px;color:var(--dark-grey);font-weight:400">Loading finance estimate…</p>
+  </div>
+
+  <!-- MAIN -->
+  <div id="mainContent" style="display:none">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-bg" id="heroBg"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-logo">
+          <img src="dealt-logo.png" alt="Dealt" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='block'">
+          <span id="logoFallback" style="display:none;font-size:20px;font-weight:700;color:white;letter-spacing:-0.5px">dealt</span>
+        </div>
+        <div class="hero-address-block">
+          <div class="hero-eyebrow">Finance Estimate For</div>
+          <div class="hero-address" id="heroAddress">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+
+      <!-- CONTEXT BANNER -->
+      <div class="context-banner">
+        <div class="context-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <div class="context-text" id="contextText">Current market rates with competitive lenders offering higher LVRs</div>
+      </div>
+
+      <!-- METRICS -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg>
+            Rates From
+          </div>
+          <div class="metric-value" id="rateFrom">—</div>
+          <div class="metric-sub">p.a. indicative</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 9h10M7 13h6" stroke-linecap="round"/></svg>
+            Max LVR
+          </div>
+          <div class="metric-value" id="maxLvr">—</div>
+          <div class="metric-sub">loan to value ratio</div>
+        </div>
+      </div>
+
+      <!-- DEAL OVERVIEW -->
+      <div class="detail-card" id="dealOverview">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Deal Overview
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Finance Type</span>
+          <span class="detail-value" id="financeType">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Loan Amount</span>
+          <span class="detail-value" id="loanAmount">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Security Value</span>
+          <span class="detail-value" id="securityValue">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Loan Term</span>
+          <span class="detail-value" id="loanTerm">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Est. Establishment Fee</span>
+          <span class="detail-value" id="estFee">—</span>
+        </div>
+      </div>
+
+      <!-- FUNDING TABLE -->
+      <div class="funding-table-card" id="fundingTableCard">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18" stroke-linecap="round"/></svg>
+          Personalised Funding Table
+        </div>
+        <table class="funding-table">
+          <thead>
+            <tr>
+              <th>Lender</th>
+              <th>Rate</th>
+              <th>LVR</th>
+              <th>Loan</th>
+            </tr>
+          </thead>
+          <tbody id="fundingTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- LEAD FORM -->
+      <div class="lead-form-card" id="leadFormCard">
+        <div class="form-header">
+          <h3>Get Your Estimate</h3>
+          <p>Enter your details to receive a personalised finance estimate from our team.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Name *</label>
+          <input type="text" class="form-input" id="leadName" placeholder="Full name" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mobile Number *</label>
+          <input type="tel" class="form-input" id="leadMobile" placeholder="0400 000 000" autocomplete="tel">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address *</label>
+          <input type="email" class="form-input" id="leadEmail" placeholder="you@example.com" autocomplete="email">
+        </div>
+
+        <!-- FUNDING TABLE TOGGLE -->
+        <div class="funding-toggle" id="fundingToggle" onclick="toggleFunding()">
+          <div class="toggle-box">
+            <div class="toggle-check">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+            </div>
+          </div>
+          <div class="toggle-content">
+            <div class="toggle-title">Include a Funding Table <span class="free-pill">FREE</span></div>
+            <div class="toggle-sub">See loan amounts, LVRs & interest costs</div>
+          </div>
+        </div>
+
+        <!-- DOC UPLOAD -->
+        <div class="upload-area" id="uploadArea">
+          <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFiles(this.files)">
+          <div class="upload-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <div class="upload-title">Attach Supporting Documents</div>
+          <div class="upload-sub">Contract of sale, valuation, DA, financials<br>PDF, DOC, JPG up to 10MB each</div>
+          <div class="file-list" id="fileList"></div>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitLead()">
+          Submit Request <span class="submit-arrow">→</span>
+        </button>
+        <div class="error-msg" id="errorMsg"></div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-card" id="successCard">
+        <div class="success-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="success-title">Request Received</div>
+        <p class="success-sub" id="successMsg">Thanks! Our team will be in touch shortly with your personalised finance estimate.</p>
+      </div>
+
+      <!-- ABOUT -->
+      <div class="about-card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01" stroke-linecap="round"/></svg>
+          About Dealt
+        </div>
+        <p>Dealt connects borrowers with Australia's leading commercial and residential property finance lenders. We specialise in development finance, construction loans, and investment lending — with access to 50+ lenders across bank and non-bank markets.</p>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-num">50+</span>
+            <div class="stat-lbl">Lending Partners</div>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">$2B+</span>
+            <div class="stat-lbl">Loans Settled</div>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">48hr</span>
+            <div class="stat-lbl">Response Time</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NOT FOUND -->
+  <div id="notFound" style="display:none">
+    <div class="not-found">
+      <div class="nf-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <h2>Deal Not Found</h2>
+      <p>This finance estimate link may have expired or is invalid.<br>Please contact your broker for a new link.</p>
+    </div>
+  </div>
+
+  <!-- STICKY BROKER CTA -->
+  <div class="sticky-cta" id="stickyCta" style="display:none">
+    <div class="sticky-inner">
+      <a class="call-btn" href="tel:+61" id="callBtn">
+        <div class="call-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <span id="callBtnText">Call James Storey</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    let dealData = null;
+    let uploadedFiles = [];
+    let fundingEnabled = false;
+
+    async function init() {
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get('d') || params.get('deal');
+      if (!slug) { showNotFound(); return; }
+
+      try {
+        const res = await fetch(`/.netlify/functions/get-deal?slug=${encodeURIComponent(slug)}`);
+        if (!res.ok) throw new Error('Not found');
+        dealData = await res.json();
+        renderDeal(dealData);
+      } catch (e) {
+        showNotFound();
+      }
+    }
+
+    function renderDeal(d) {
+      document.title = `Finance Estimate | ${d.address}`;
+      document.getElementById('heroAddress').textContent = d.address;
+
+      // Hero image
+      const bg = document.getElementById('heroBg');
+      if (d.hero_image_url) {
+        bg.style.backgroundImage = `url('${d.hero_image_url}')`;
+      } else {
+        bg.classList.add('no-image');
+      }
+
+      // Metrics
+      document.getElementById('rateFrom').textContent = d.rate_from ? `${d.rate_from}%` : '—';
+      document.getElementById('maxLvr').textContent = d.max_lvr ? `${d.max_lvr}%` : '—';
+
+      // Detail rows
+      document.getElementById('financeType').textContent = d.finance_type || '—';
+      document.getElementById('loanAmount').textContent = d.loan_amount ? fmt(d.loan_amount) : '—';
+      document.getElementById('securityValue').textContent = d.security_value ? fmt(d.security_value) : '—';
+      document.getElementById('loanTerm').textContent = d.loan_term_months ? `${d.loan_term_months} months` : '—';
+
+      if (d.loan_amount) {
+        const fee = d.loan_amount * (d.establishment_fee_pct || 0.01);
+        document.getElementById('estFee').textContent = fmt(fee) + ` (${((d.establishment_fee_pct||0.01)*100).toFixed(1)}%)`;
+      }
+
+      if (d.context_note) document.getElementById('contextText').textContent = d.context_note;
+
+      // Broker CTA
+      if (d.broker_name) document.getElementById('callBtnText').textContent = `Call ${d.broker_name}`;
+      if (d.broker_phone) document.getElementById('callBtn').href = `tel:${d.broker_phone.replace(/\s/g,'')}`;
+
+      // Success message
+      document.getElementById('successMsg').textContent =
+        `Thanks! ${d.broker_name || 'Our team'} will be in touch shortly with your personalised finance estimate.`;
+
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+      document.getElementById('stickyCta').style.display = 'block';
+    }
+
+    function toggleFunding() {
+      fundingEnabled = !fundingEnabled;
+      document.getElementById('fundingToggle').classList.toggle('active', fundingEnabled);
+      if (fundingEnabled && dealData) {
+        buildFundingTable(dealData);
+        document.getElementById('fundingTableCard').classList.add('visible');
+      } else {
+        document.getElementById('fundingTableCard').classList.remove('visible');
+      }
+    }
+
+    function buildFundingTable(d) {
+      const sec = d.security_value || 0;
+      const base = d.rate_from || 6.5;
+      const rows = [
+        { type: 'Major Bank',    badge: 'Best rate',   rate: base,       lvr: 55 },
+        { type: 'Tier 2 Bank',   badge: '',            rate: base + 0.5, lvr: 60 },
+        { type: 'Non-Bank',      badge: 'Higher LVR',  rate: base + 1.2, lvr: d.max_lvr || 70 },
+      ];
+      document.getElementById('fundingTableBody').innerHTML = rows.map(r => {
+        const loan = sec * r.lvr / 100;
+        return `<tr>
+          <td>${r.type}${r.badge ? `<br><span class="table-badge">${r.badge}</span>` : ''}</td>
+          <td>${r.rate.toFixed(2)}%</td>
+          <td>${r.lvr}%</td>
+          <td>${fmt(loan)}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // File upload
+    function handleFiles(files) {
+      for (const f of files) {
+        if (!uploadedFiles.find(x => x.name === f.name)) uploadedFiles.push(f);
+      }
+      renderFiles();
+    }
+
+    function renderFiles() {
+      document.getElementById('fileList').innerHTML = uploadedFiles.map((f,i) => `
+        <div class="file-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#175CF5" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span class="file-pill-name">${f.name}</span>
+          <span class="file-pill-size">${(f.size/1024).toFixed(0)}KB</span>
+          <span class="file-pill-remove" onclick="removeFile(${i})">×</span>
+        </div>`).join('');
+    }
+
+    function removeFile(i) {
+      uploadedFiles.splice(i,1);
+      renderFiles();
+    }
+
+    // Drag & drop
+    const ua = document.getElementById('uploadArea');
+    ua.addEventListener('dragover', e => { e.preventDefault(); ua.classList.add('dragging'); });
+    ua.addEventListener('dragleave', () => ua.classList.remove('dragging'));
+    ua.addEventListener('drop', e => {
+      e.preventDefault();
+      ua.classList.remove('dragging');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    async function submitLead() {
+      const name  = document.getElementById('leadName').value.trim();
+      const mobile= document.getElementById('leadMobile').value.trim();
+      const email = document.getElementById('leadEmail').value.trim();
+      const err   = document.getElementById('errorMsg');
+
+      if (!name || !mobile || !email) {
+        err.textContent = 'Please fill in all required fields.';
+        err.classList.add('visible'); return;
+      }
+      if (!/\S+@\S+\.\S+/.test(email)) {
+        err.textContent = 'Please enter a valid email address.';
+        err.classList.add('visible'); return;
+      }
+
+      err.classList.remove('visible');
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px;border-color:rgba(255,255,255,0.3);border-top-color:white"></div>&nbsp;Submitting…';
+
+      try {
+        let docUrls = [];
+        if (uploadedFiles.length) {
+          const fd = new FormData();
+          uploadedFiles.forEach(f => fd.append('files', f));
+          fd.append('deal_id', dealData.id);
+          const ur = await fetch('/.netlify/functions/upload-doc', { method:'POST', body:fd });
+          docUrls = (await ur.json()).urls || [];
+        }
+
+        const res = await fetch('/.netlify/functions/submit-lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ deal_id: dealData.id, name, mobile, email, funding_table_requested: fundingEnabled, doc_urls: docUrls })
+        });
+
+        if (!res.ok) throw new Error();
+
+        document.getElementById('leadFormCard').style.display = 'none';
+        document.getElementById('successCard').classList.add('visible');
+
+      } catch {
+        btn.disabled = false;
+        btn.innerHTML = 'Submit Request <span class="submit-arrow">→</span>';
+        err.textContent = 'Something went wrong. Please try again or call us directly.';
+        err.classList.add('visible');
+      }
+    }
+
+    function showNotFound() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('notFound').style.display = 'block';
+    }
+
+    function fmt(n) {
+      if (!n) return '—';
+      if (n >= 1e6) return `$${(n/1e6).toFixed(2)}M`;
+      if (n >= 1e3) return `$${(n/1e3).toFixed(0)}K`;
+      return `$${n.toLocaleString()}`;
+    }
+
+    init();
+  </script>
+</body>
+</html>

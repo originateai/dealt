@@ -1,0 +1,30 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[dev]
+  port = 8888
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/:splat"
+  status = 200
+
+[[headers]]
+  for = "/*.html"
+    [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/netlify/functions/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
