@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Deal | Dealt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:       #0D1B2E;
+      --blue:       #175CF5;
+      --blue-light: #D1DEFF;
+      --blue-mid:   #4A7FF7;
+      --dark-grey:  #69707F;
+      --mid-grey:   #BFC5D2;
+      --light-bg:   #F4F6FC;
+      --white:      #FFFFFF;
+      --sidebar-w:  220px;
+      --shadow-sm:  0 1px 4px rgba(23,92,245,0.08);
+      --shadow-md:  0 4px 24px rgba(23,92,245,0.1);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Rubik',sans-serif; background:var(--light-bg); color:var(--navy); display:flex; min-height:100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--navy);
+      min-height: 100vh;
+      position: fixed;
+      left:0; top:0; bottom:0;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+    }
+
+    .sidebar-logo {
+      padding: 0 20px 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-logo img {
+      height: 24px;
+      filter: brightness(0) invert(1);
+    }
+
+    .sidebar-logo-fallback {
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-section {
+      flex:1;
+      padding: 0 10px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: all 0.15s;
+      margin-bottom: 2px;
+    }
+
+    .nav-item:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.06); }
+    .nav-item.active { color: white; background: var(--blue); }
+    .nav-item svg { width:16px; height:16px; flex-shrink:0; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .user-row { display:flex; align-items:center; gap:10px; }
+    .user-av {
+      width: 30px; height: 30px;
+      background: var(--blue);
+      border-radius: 50%;
+      display: flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:700; color:white;
+      flex-shrink:0;
+    }
+    .user-name  { font-size:12px; color:rgba(255,255,255,0.75); font-weight:500; }
+    .user-email { font-size:11px; color:rgba(255,255,255,0.35); }
+
+    /* ── MAIN ── */
+    .main { margin-left:var(--sidebar-w); flex:1; padding:36px 40px; }
+
+    .page-head { margin-bottom:28px; }
+    .page-head h1 { font-size:24px; font-weight:700; letter-spacing:-0.4px; margin-bottom:5px; }
+    .page-head p { font-size:13px; color:var(--dark-grey); }
+
+    /* ── GRID ── */
+    .form-grid { display:grid; grid-template-columns:1fr 340px; gap:20px; align-items:start; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 22px 20px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+
+    .card:last-child { margin-bottom:0; }
+
+    .card-head {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--blue-light);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .card-head svg { width:15px; height:15px; color:var(--blue); }
+
+    .row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+    .fg { margin-bottom:14px; }
+    .fg:last-child { margin-bottom:0; }
+
+    .lbl {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--dark-grey);
+      margin-bottom: 5px;
+    }
+
+    .inp, .sel, .ta {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid var(--mid-grey);
+      border-radius: 8px;
+      font-family:'Rubik',sans-serif;
+      font-size: 13px;
+      color: var(--navy);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .inp:focus,.sel:focus,.ta:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(23,92,245,0.1);
+    }
+
+    .ta { resize:vertical; min-height:72px; }
+
+    .input-wrap { position:relative; }
+    .pre { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:13px; color:var(--mid-grey); pointer-events:none; }
+    .suf { position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--mid-grey); pointer-events:none; }
+    .input-wrap .inp.has-pre { padding-left:22px; }
+    .input-wrap .inp.has-suf { padding-right:34px; }
+
+    /* ── CALC PREVIEW ── */
+    .calc-box {
+      background: var(--light-bg);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
+      display:none;
+    }
+
+    .calc-box-title {
+      font-size:11px;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:0.8px;
+      color:var(--dark-grey);
+      margin-bottom:10px;
+    }
+
+    .calc-row { display:flex; justify-content:space-between; font-size:13px; padding:5px 0; }
+    .calc-row + .calc-row { border-top:1px solid var(--blue-light); }
+    .clbl { color:var(--dark-grey); }
+    .cval { color:var(--navy); font-weight:500; }
+    .calc-total { font-weight:700; font-size:14px; }
+    .calc-total .clbl { color:var(--navy); }
+    .calc-total .cval { color:var(--blue); }
+
+    /* ── BUTTONS ── */
+    .actions { display:flex; gap:10px; margin-top:20px; }
+
+    .btn-primary {
+      flex:1; padding:13px 20px;
+      background:var(--blue); color:white;
+      border:none; border-radius:8px;
+      font-family:'Rubik',sans-serif; font-size:14px; font-weight:600;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover { background:#1350D9; transform:translateY(-1px); box-shadow:0 6px 20px rgba(23,92,245,0.3); }
+    .btn-primary:disabled { opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .btn-sec {
+      padding:13px 18px;
+      background:transparent; color:var(--navy);
+      border:1.5px solid var(--mid-grey); border-radius:8px;
+      font-family:'Rubik',sans-serif; font-size:13px; font-weight:500;
+      cursor:pointer; transition:border-color 0.2s;
+    }
+    .btn-sec:hover { border-color:var(--navy); }
+
+    /* ── PREVIEW CARD ── */
+    .preview-card {
+      background:var(--white);
+      border-radius:14px;
+      box-shadow:var(--shadow-sm);
+      overflow:hidden;
+      position:sticky; top:36px;
+    }
+
+    .preview-head {
+      padding:14px 16px;
+      border-bottom:1px solid var(--blue-light);
+      font-size:12px; font-weight:600; color:var(--dark-grey);
+      text-transform:uppercase; letter-spacing:0.6px;
+    }
+
+    .prev-hero {
+      height:140px;
+      background:var(--navy);
+      position:relative; overflow:hidden;
+    }
+
+    .prev-hero-bg {
+      position:absolute; inset:0;
+      background-size:cover; background-position:center; opacity:0.45;
+    }
+
+    .prev-hero-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(to top,rgba(13,27,46,0.9) 0%,transparent 60%);
+    }
+
+    .prev-hero-content {
+      position:relative; z-index:2;
+      height:100%; padding:12px 14px;
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+
+    .prev-logo img { height:18px; filter:brightness(0) invert(1); }
+    .prev-logo-fb { font-size:14px; font-weight:700; color:white; }
+    .prev-eyebrow { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--blue-light); margin-bottom:4px; }
+    .prev-addr { font-size:14px; font-weight:700; color:white; line-height:1.25; }
+
+    .prev-metrics { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:12px 14px; }
+    .prev-metric { background:var(--light-bg); border-radius:8px; padding:10px 12px; }
+    .prev-metric-lbl { font-size:10px; font-weight:600; color:var(--blue); margin-bottom:3px; }
+    .prev-metric-val { font-size:20px; font-weight:700; color:var(--navy); letter-spacing:-0.5px; }
+
+    .prev-url { padding:12px 14px; border-top:1px solid var(--blue-light); }
+    .prev-url-lbl { font-size:10px; font-weight:600; color:var(--dark-grey); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
+    .prev-url-val { font-size:12px; font-family:monospace; background:var(--light-bg); border-radius:6px; padding:8px 10px; color:var(--navy); word-break:break-all; }
+
+    /* ── MODAL ── */
+    .modal-bg {
+      position:fixed; inset:0;
+      background:rgba(13,27,46,0.55);
+      backdrop-filter:blur(4px);
+      z-index:1000;
+      display:none;
+      align-items:center; justify-content:center;
+      padding:20px;
+    }
+    .modal-bg.on { display:flex; }
+
+    .modal {
+      background:var(--white);
+      border-radius:18px;
+      padding:36px 32px;
+      max-width:420px; width:100%;
+      text-align:center;
+      animation:fadeUp 0.3s ease both;
+    }
+
+    .modal-icon {
+      width:64px; height:64px;
+      background:var(--blue-light);
+      border-radius:18px;
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 18px;
+    }
+    .modal-icon svg { width:30px; height:30px; color:var(--blue); }
+    .modal-title { font-size:22px; font-weight:700; color:var(--navy); margin-bottom:8px; letter-spacing:-0.3px; }
+    .modal-sub { font-size:13px; color:var(--dark-grey); line-height:1.6; margin-bottom:20px; }
+
+    .modal-url-lbl { font-size:11px; font-weight:600; color:var(--dark-grey); text-transform:uppercase; letter-spacing:0.5px; text-align:left; margin-bottom:5px; }
+    .modal-url-box { background:var(--light-bg); border-radius:8px; padding:12px 14px; font-size:12px; font-family:monospace; color:var(--navy); word-break:break-all; text-align:left; margin-bottom:18px; }
+
+    .modal-btns { display:flex; gap:10px; }
+    .modal-copy {
+      flex:1; padding:13px;
+      background:var(--blue); color:white;
+      border:none; border-radius:8px;
+      font-family:'Rubik',sans-serif; font-size:14px; font-weight:600;
+      cursor:pointer; transition:background 0.2s;
+    }
+    .modal-copy:hover { background:#1350D9; }
+    .modal-close {
+      padding:13px 18px;
+      background:transparent; color:var(--navy);
+      border:1.5px solid var(--mid-grey); border-radius:8px;
+      font-size:13px; font-weight:500;
+      cursor:pointer; text-decoration:none;
+      display:flex; align-items:center;
+      transition:border-color 0.2s;
+    }
+    .modal-close:hover { border-color:var(--navy); }
+
+    .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.75s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <img src="../dealt-logo.png" alt="Dealt" onerror="this.style.display='none';document.getElementById('logoFb').style.display='block'">
+      <span id="logoFb" class="sidebar-logo-fallback" style="display:none">dealt</span>
+    </div>
+    <div class="nav-section">
+      <a href="index.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="create-deal.html" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        New Deal
+      </a>
+      <a href="deals.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        All Deals
+      </a>
+      <a href="leads.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Leads
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="user-av">JS</div>
+        <div>
+          <div class="user-name">James Storey</div>
+          <div class="user-email">info@dealt.com.au</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="page-head">
+      <h1>Create Finance Flyer</h1>
+      <p>Generate a shareable deal page with finance estimates for your client</p>
+    </div>
+
+    <div class="form-grid">
+
+      <!-- LEFT: FORM -->
+      <div>
+
+        <!-- PROPERTY -->
+        <div class="card">
+          <div class="card-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Property Details
+          </div>
+          <div class="fg">
+            <label class="lbl">Property Address *</label>
+            <input type="text" class="inp" id="address" placeholder="22 Advantage Avenue, Morisset NSW 2264" oninput="updatePreview()">
+          </div>
+          <div class="row2">
+            <div class="fg">
+              <label class="lbl">Finance Type *</label>
+              <select class="sel" id="financeType" onchange="updatePreview()">
+                <option value="">Select…</option>
+                <option>Development Finance</option>
+                <option>Construction Loan</option>
+                <option>Investment Loan</option>
+                <option>Bridging Finance</option>
+                <option>Land Loan</option>
+                <option>Commercial Mortgage</option>
+                <option>Mezzanine Finance</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label class="lbl">Loan Term</label>
+              <div class="input-wrap">
+                <input type="number" class="inp has-suf" id="loanTerm" placeholder="12" oninput="updatePreview()">
+                <span class="suf">mo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FINANCIALS -->
+        <div class="card">
+          <div class="card-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            Finance Details
+          </div>
+          <div class="row2">
+            <div class="fg">
+              <label class="lbl">Security Value *</label>
+              <div class="input-wrap"><span class="pre">$</span><input type="number" class="inp has-pre" id="securityValue" placeholder="5000000" oninput="updateCalcs()"></div>
+            </div>
+            <div class="fg">
+              <label class="lbl">Loan Amount *</label>
+              <div class="input-wrap"><span class="pre">$</span><input type="number" class="inp has-pre" id="loanAmount" placeholder="3250000" oninput="updateCalcs()"></div>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="fg">
+              <label class="lbl">Rate From * (indicative)</label>
+              <div class="input-wrap"><input type="number" step="0.01" class="inp has-suf" id="rateFrom" placeholder="6.50" oninput="updateCalcs()"><span class="suf">%</span></div>
+            </div>
+            <div class="fg">
+              <label class="lbl">Max LVR *</label>
+              <div class="input-wrap"><input type="number" class="inp has-suf" id="maxLvr" placeholder="65" oninput="updateCalcs()"><span class="suf">%</span></div>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="fg">
+              <label class="lbl">Establishment Fee</label>
+              <div class="input-wrap"><input type="number" step="0.1" class="inp has-suf" id="estFee" placeholder="1.0" oninput="updateCalcs()"><span class="suf">%</span></div>
+            </div>
+            <div class="fg">
+              <label class="lbl">Line Fee (optional)</label>
+              <div class="input-wrap"><input type="number" step="0.1" class="inp has-suf" id="lineFee" placeholder="0.5" oninput="updateCalcs()"><span class="suf">% pa</span></div>
+            </div>
+          </div>
+
+          <!-- CALC BOX -->
+          <div class="calc-box" id="calcBox">
+            <div class="calc-box-title">Indicative Cost Summary</div>
+            <div class="calc-row"><span class="clbl">Loan Amount</span><span class="cval" id="cLoan">—</span></div>
+            <div class="calc-row"><span class="clbl">LVR</span><span class="cval" id="cLvr">—</span></div>
+            <div class="calc-row"><span class="clbl">Annual Interest</span><span class="cval" id="cInterest">—</span></div>
+            <div class="calc-row"><span class="clbl">Establishment Fee</span><span class="cval" id="cEstFee">—</span></div>
+            <div class="calc-row calc-total"><span class="clbl">Est. Total Cost</span><span class="cval" id="cTotal">—</span></div>
+          </div>
+        </div>
+
+        <!-- CONTEXT NOTE -->
+        <div class="card">
+          <div class="card-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Market Context Note
+          </div>
+          <div class="fg">
+            <textarea class="ta" id="contextNote" placeholder="e.g. Current market rates with non-bank lenders offering higher LVRs for development sites in this corridor…" oninput="updatePreview()"></textarea>
+          </div>
+        </div>
+
+        <!-- BROKER -->
+        <div class="card">
+          <div class="card-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Broker Details
+          </div>
+          <div class="row2">
+            <div class="fg">
+              <label class="lbl">Broker Name</label>
+              <input type="text" class="inp" id="brokerName" value="James Storey" oninput="updatePreview()">
+            </div>
+            <div class="fg">
+              <label class="lbl">Phone</label>
+              <input type="tel" class="inp" id="brokerPhone" placeholder="+61 400 000 000">
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-sec" onclick="history.back()">Cancel</button>
+          <button class="btn-primary" id="createBtn" onclick="createDeal()">
+            Create Flyer &amp; Copy Link →
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: PREVIEW -->
+      <div>
+        <div class="preview-card">
+          <div class="preview-head">Live Preview</div>
+          <div class="prev-hero">
+            <div class="prev-hero-bg" id="prevBg"></div>
+            <div class="prev-hero-overlay"></div>
+            <div class="prev-hero-content">
+              <div class="prev-logo">
+                <img src="../dealt-logo.png" alt="Dealt" onerror="this.style.display='none';document.getElementById('prevLogoFb').style.display='block'">
+                <span id="prevLogoFb" class="prev-logo-fb" style="display:none">dealt</span>
+              </div>
+              <div>
+                <div class="prev-eyebrow">Finance Estimate For</div>
+                <div class="prev-addr" id="prevAddr">Enter an address above</div>
+              </div>
+            </div>
+          </div>
+          <div class="prev-metrics">
+            <div class="prev-metric">
+              <div class="prev-metric-lbl">Rates From</div>
+              <div class="prev-metric-val" id="prevRate">—</div>
+            </div>
+            <div class="prev-metric">
+              <div class="prev-metric-lbl">Max LVR</div>
+              <div class="prev-metric-val" id="prevLvr">—</div>
+            </div>
+          </div>
+          <div class="prev-url">
+            <div class="prev-url-lbl">Shareable Link</div>
+            <div class="prev-url-val" id="prevUrl">dealt.com.au/?d=your-slug</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- SUCCESS MODAL -->
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="modal-title">Flyer Live!</div>
+      <p class="modal-sub">Your finance estimate page is ready to share with your client.</p>
+      <div class="modal-url-lbl">Shareable Link</div>
+      <div class="modal-url-box" id="modalUrl"></div>
+      <div class="modal-btns">
+        <button class="modal-copy" onclick="copyLink()">Copy Link</button>
+        <a class="modal-close" href="index.html">Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updatePreview() {
+      const addr = document.getElementById('address').value || 'Enter an address above';
+      const rate = document.getElementById('rateFrom').value;
+      const lvr  = document.getElementById('maxLvr').value;
+
+      document.getElementById('prevAddr').textContent = addr;
+      document.getElementById('prevRate').textContent = rate ? rate + '%' : '—';
+      document.getElementById('prevLvr').textContent  = lvr  ? lvr  + '%' : '—';
+
+      if (addr && addr !== 'Enter an address above') {
+        const slug = addr.toLowerCase().replace(/[^a-z0-9]+/g,'-').substring(0,40);
+        document.getElementById('prevUrl').textContent = `dealt.com.au/?d=${slug}`;
+      }
+    }
+
+    function updateCalcs() {
+      updatePreview();
+      const loan = parseFloat(document.getElementById('loanAmount').value);
+      const sec  = parseFloat(document.getElementById('securityValue').value);
+      const rate = parseFloat(document.getElementById('rateFrom').value);
+      const fee  = parseFloat(document.getElementById('estFee').value) || 1;
+      const term = parseFloat(document.getElementById('loanTerm').value) || 12;
+
+      if (!loan || !rate) { document.getElementById('calcBox').style.display='none'; return; }
+      document.getElementById('calcBox').style.display='block';
+
+      const lvr = sec ? ((loan/sec)*100).toFixed(1) : '—';
+      const interest = loan * (rate/100) * (term/12);
+      const feeAmt = loan * (fee/100);
+      const total = interest + feeAmt;
+
+      document.getElementById('cLoan').textContent = fmt(loan);
+      document.getElementById('cLvr').textContent = sec ? `${lvr}%` : '—';
+      document.getElementById('cInterest').textContent = fmt(interest) + ` (${term}mo)`;
+      document.getElementById('cEstFee').textContent = fmt(feeAmt) + ` (${fee}%)`;
+      document.getElementById('cTotal').textContent = fmt(total);
+    }
+
+    async function createDeal() {
+      const address     = document.getElementById('address').value.trim();
+      const financeType = document.getElementById('financeType').value;
+      const loanAmount  = parseFloat(document.getElementById('loanAmount').value);
+      const secValue    = parseFloat(document.getElementById('securityValue').value);
+      const rateFrom    = parseFloat(document.getElementById('rateFrom').value);
+      const maxLvr      = parseFloat(document.getElementById('maxLvr').value);
+
+      if (!address || !financeType || !loanAmount || !rateFrom || !maxLvr) {
+        alert('Please fill in all required fields (marked with *).');
+        return;
+      }
+
+      const btn = document.getElementById('createBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div>&nbsp;Creating…';
+
+      try {
+        const res = await fetch('/.netlify/functions/create-deal', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            address,
+            finance_type: financeType,
+            loan_amount: loanAmount,
+            security_value: secValue,
+            rate_from: rateFrom,
+            max_lvr: maxLvr,
+            loan_term_months: parseInt(document.getElementById('loanTerm').value) || 12,
+            establishment_fee_pct: (parseFloat(document.getElementById('estFee').value) || 1) / 100,
+            line_fee_pct: (parseFloat(document.getElementById('lineFee').value) || 0) / 100,
+            context_note: document.getElementById('contextNote').value.trim(),
+            broker_name: document.getElementById('brokerName').value.trim() || 'James Storey',
+            broker_phone: document.getElementById('brokerPhone').value.trim(),
+          })
+        });
+
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        const url = `${window.location.origin}/?d=${data.slug}`;
+        document.getElementById('modalUrl').textContent = url;
+        document.getElementById('modal').classList.add('on');
+
+      } catch {
+        alert('Error creating deal. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Create Flyer &amp; Copy Link →';
+      }
+    }
+
+    function copyLink() {
+      const url = document.getElementById('modalUrl').textContent;
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.querySelector('.modal-copy');
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => btn.textContent = 'Copy Link', 2000);
+      });
+    }
+
+    function fmt(n) {
+      if (!n) return '—';
+      if (n >= 1e6) return `$${(n/1e6).toFixed(2)}M`;
+      if (n >= 1e3) return `$${(n/1e3).toFixed(0)}K`;
+      return `$${n.toLocaleString()}`;
+    }
+  </script>
+</body>
+</html>
