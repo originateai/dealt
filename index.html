@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Finance Estimate | Dealt</title>
+  <title>Dealt — Australia's Commercial Real Estate Finance Marketplace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -16,479 +16,650 @@
       --mid-grey:   #BFC5D2;
       --light-bg:   #F4F6FC;
       --white:      #FFFFFF;
-      --error:      #E53935;
-      --success:    #1DB954;
       --shadow-sm:  0 1px 4px rgba(23,92,245,0.08);
       --shadow-md:  0 4px 24px rgba(23,92,245,0.1);
-      --shadow-lg:  0 8px 40px rgba(13,27,46,0.12);
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; scroll-behavior:smooth; }
 
     body {
       font-family: 'Rubik', sans-serif;
-      background: var(--light-bg);
+      background: var(--white);
       color: var(--navy);
-      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* ─── LOADING ─── */
-    .loading-state {
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 40px;
+      height: 68px;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      gap: 16px;
-      background: var(--light-bg);
+      justify-content: space-between;
+      background: rgba(13,27,46,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
 
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid var(--blue-light);
-      border-top-color: var(--blue);
-      border-radius: 50%;
-      animation: spin 0.75s linear infinite;
+    .nav-logo img {
+      height: 26px;
+      filter: brightness(0) invert(1);
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .nav-logo-fb {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.5px;
+    }
 
-    /* ─── HERO ─── */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: white; }
+
+    .nav-cta {
+      padding: 9px 20px;
+      background: var(--blue);
+      color: white !important;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta:hover { background: #1350D9 !important; color: white !important; }
+
+    /* ── HERO ── */
     .hero {
       position: relative;
-      height: 300px;
+      height: 100vh;
+      min-height: 620px;
       overflow: hidden;
-      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .hero-bg {
+    .hero-video {
       position: absolute;
       inset: 0;
-      background-size: cover;
-      background-position: center;
-      opacity: 0.45;
-      transition: opacity 0.8s ease;
-    }
-
-    /* Fallback gradient when no image */
-    .hero-bg.no-image {
-      background: linear-gradient(135deg, #0D1B2E 0%, #175CF5 100%);
-      opacity: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
     }
 
     .hero-overlay {
       position: absolute;
       inset: 0;
       background: linear-gradient(
-        to top,
-        rgba(13,27,46,0.92) 0%,
-        rgba(13,27,46,0.4) 55%,
-        rgba(13,27,46,0.15) 100%
+        135deg,
+        rgba(13,27,46,0.88) 0%,
+        rgba(13,27,46,0.6) 60%,
+        rgba(23,92,245,0.3) 100%
       );
+      z-index: 1;
     }
 
     .hero-content {
       position: relative;
       z-index: 2;
-      height: 100%;
-      padding: 22px 20px 28px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      text-align: center;
+      padding: 0 24px;
+      max-width: 800px;
     }
-
-    .hero-logo img {
-      height: 28px;
-      width: auto;
-      /* White-ify the logo on dark bg using filter */
-      filter: brightness(0) invert(1);
-    }
-
-    .hero-address-block {}
 
     .hero-eyebrow {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: var(--blue-light);
-      margin-bottom: 8px;
-      opacity: 0.9;
-    }
-
-    .hero-address {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--white);
-      line-height: 1.2;
-      letter-spacing: -0.3px;
-    }
-
-    /* ─── MAIN ─── */
-    .main {
-      padding: 0 16px 130px;
-      max-width: 540px;
-      margin: 0 auto;
-    }
-
-    /* ─── CONTEXT BANNER ─── */
-    .context-banner {
-      background: var(--white);
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin: 16px 0 12px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
-      box-shadow: var(--shadow-sm);
-      animation: fadeUp 0.4s ease 0.05s both;
+      gap: 8px;
+      background: rgba(23,92,245,0.2);
+      border: 1px solid rgba(23,92,245,0.4);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue-light);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
     }
 
-    .context-icon-wrap {
-      width: 38px;
-      height: 38px;
-      background: var(--blue-light);
-      border-radius: 10px;
+    .hero-eyebrow span { width: 6px; height: 6px; background: var(--blue); border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 68px);
+      font-weight: 800;
+      color: white;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--blue-light);
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 19px);
+      color: rgba(255,255,255,0.75);
+      line-height: 1.6;
+      margin-bottom: 36px;
+      font-weight: 400;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-actions {
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
-    .context-icon-wrap svg { width: 18px; height: 18px; color: var(--blue); }
-
-    .context-text {
-      font-size: 13px;
-      color: var(--dark-grey);
-      line-height: 1.55;
-      font-weight: 400;
+    .btn-primary {
+      padding: 15px 32px;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Rubik', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
     }
 
-    /* ─── METRICS ─── */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+    .btn-primary:hover {
+      background: #1350D9;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(23,92,245,0.4);
+    }
+
+    .btn-ghost {
+      padding: 14px 28px;
+      background: transparent;
+      color: white;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: 10px;
+      font-family: 'Rubik', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost:hover { border-color: white; background: rgba(255,255,255,0.08); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.4);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+    .hero-scroll svg { width: 20px; height: 20px; }
+
+    /* ── SECTION STYLES ── */
+    section { padding: 96px 40px; }
+
+    .section-inner { max-width: 1140px; margin: 0 auto; }
+
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: 2px;
+      text-transform: uppercase;
       margin-bottom: 12px;
-      animation: fadeUp 0.4s ease 0.1s both;
     }
 
-    .metric-card {
+    .section-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.1;
+      letter-spacing: -0.8px;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      font-size: 17px;
+      color: var(--dark-grey);
+      line-height: 1.65;
+      max-width: 560px;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-section { background: var(--light-bg); }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    .step-card {
       background: var(--white);
-      border-radius: 14px;
-      padding: 18px 16px;
+      border-radius: 16px;
+      padding: 32px 28px;
       box-shadow: var(--shadow-sm);
       position: relative;
       overflow: hidden;
     }
 
-    .metric-card::after {
+    .step-card::before {
       content: '';
       position: absolute;
-      top: 0; left: 0;
-      width: 3px;
-      height: 100%;
+      top: 0; left: 0; right: 0;
+      height: 3px;
       background: var(--blue);
-      border-radius: 14px 0 0 14px;
     }
 
-    .metric-label {
+    .step-num {
+      width: 44px;
+      height: 44px;
+      background: var(--blue-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 20px;
+    }
+
+    .step-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    .step-card p {
+      font-size: 14px;
+      color: var(--dark-grey);
+      line-height: 1.65;
+    }
+
+    /* ── LOAN TYPES ── */
+    .loans-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 56px;
+    }
+
+    .loan-card {
+      background: var(--white);
+      border: 1.5px solid var(--blue-light);
+      border-radius: 16px;
+      padding: 24px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loan-card:hover {
+      border-color: var(--blue);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .loan-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      background: var(--light-bg);
+    }
+
+    .loan-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+    .loan-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .loan-card p {
+      font-size: 12px;
+      color: var(--dark-grey);
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .loan-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .loan-stat {
       font-size: 11px;
       font-weight: 600;
       color: var(--blue);
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
       display: flex;
       align-items: center;
       gap: 5px;
     }
 
-    .metric-label svg { width: 13px; height: 13px; }
+    .loan-stat::before { content: '→'; font-size: 10px; }
 
-    .metric-value {
-      font-size: 30px;
-      font-weight: 700;
-      color: var(--navy);
-      line-height: 1;
-      letter-spacing: -0.5px;
+    /* ── VIDEO SECTION ── */
+    .video-section { background: var(--navy); padding: 80px 40px; }
+
+    .video-wrap {
+      max-width: 900px;
+      margin: 48px auto 0;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+      position: relative;
     }
 
-    .metric-sub {
-      font-size: 11px;
-      color: var(--mid-grey);
-      margin-top: 5px;
-      font-weight: 400;
+    .video-wrap video {
+      width: 100%;
+      display: block;
+      border-radius: 20px;
     }
 
-    /* ─── DEAL OVERVIEW ─── */
-    .detail-card {
+    .video-section .section-title { color: white; }
+    .video-section .section-sub { color: rgba(255,255,255,0.6); }
+    .video-section .section-eyebrow { color: var(--blue-light); }
+
+    /* ── DNA / VALUES ── */
+    .dna-section { background: var(--light-bg); }
+
+    .dna-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+
+    .dna-card {
       background: var(--white);
-      border-radius: 14px;
-      padding: 18px 16px;
-      margin-bottom: 12px;
+      border-radius: 16px;
+      padding: 28px;
       box-shadow: var(--shadow-sm);
-      animation: fadeUp 0.4s ease 0.15s both;
+      display: flex;
+      gap: 18px;
     }
 
-    .card-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--navy);
-      letter-spacing: 0.3px;
-      margin-bottom: 14px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--blue-light);
+    .dna-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--blue-light);
+      border-radius: 12px;
       display: flex;
       align-items: center;
-      gap: 7px;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    .card-title svg { width: 15px; height: 15px; color: var(--blue); }
+    .dna-icon svg { width: 22px; height: 22px; color: var(--blue); }
 
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 9px 0;
-      border-bottom: 1px solid #F0F2F8;
-    }
-
-    .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
-
-    .detail-label { font-size: 13px; color: var(--dark-grey); font-weight: 400; }
-    .detail-value { font-size: 13px; font-weight: 600; color: var(--navy); }
-
-    /* ─── FUNDING TABLE ─── */
-    .funding-table-card {
-      background: var(--navy);
-      border-radius: 14px;
-      padding: 18px 16px;
-      margin-bottom: 12px;
-      display: none;
-      animation: fadeUp 0.35s ease both;
-    }
-
-    .funding-table-card.visible { display: block; }
-    .funding-table-card .card-title { color: var(--white); border-bottom-color: rgba(255,255,255,0.1); }
-    .funding-table-card .card-title svg { color: var(--blue-light); }
-
-    .funding-table { width: 100%; border-collapse: collapse; }
-
-    .funding-table th {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--blue-light);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      text-align: left;
-      padding: 0 0 10px;
-    }
-
-    .funding-table th:last-child, .funding-table td:last-child { text-align: right; }
-
-    .funding-table td {
-      font-size: 13px;
-      color: rgba(255,255,255,0.8);
-      padding: 9px 0;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .funding-table td:last-child { color: var(--white); font-weight: 600; }
-
-    .table-badge {
-      display: inline-block;
-      padding: 2px 6px;
-      background: rgba(23,92,245,0.3);
-      color: var(--blue-light);
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 600;
-      margin-top: 3px;
-    }
-
-    /* ─── LEAD FORM ─── */
-    .lead-form-card {
-      background: var(--white);
-      border-radius: 14px;
-      padding: 20px 16px;
-      margin-bottom: 12px;
-      box-shadow: var(--shadow-sm);
-      animation: fadeUp 0.4s ease 0.2s both;
-    }
-
-    .form-header {
-      margin-bottom: 20px;
-    }
-
-    .form-header h3 {
-      font-size: 18px;
+    .dna-card h3 {
+      font-size: 16px;
       font-weight: 700;
       color: var(--navy);
-      margin-bottom: 4px;
+      margin-bottom: 7px;
       letter-spacing: -0.2px;
     }
 
-    .form-header p {
+    .dna-card p {
       font-size: 13px;
+      color: var(--dark-grey);
+      line-height: 1.65;
+    }
+
+    /* ── STATS ── */
+    .stats-section {
+      background: var(--blue);
+      padding: 72px 40px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .stat-item {}
+    .stat-num {
+      font-size: 52px;
+      font-weight: 800;
+      color: white;
+      line-height: 1;
+      letter-spacing: -2px;
+      margin-bottom: 8px;
+    }
+    .stat-lbl { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 400; }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-text .section-sub { margin-bottom: 24px; }
+
+    .about-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .about-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
       color: var(--dark-grey);
       line-height: 1.5;
     }
 
-    .form-group { margin-bottom: 12px; }
+    .about-list li::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background: var(--blue-light);
+      border-radius: 50%;
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 10l3.5 3.5L15 7' stroke='%23175CF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-size: 16px;
+      background-repeat: no-repeat;
+      background-position: center;
+      margin-top: 2px;
+    }
 
-    .form-label {
+    .about-visual {
+      background: var(--light-bg);
+      border-radius: 20px;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .about-stat-box {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .about-stat-num {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--blue);
+      letter-spacing: -1px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .about-stat-lbl {
+      font-size: 12px;
+      color: var(--dark-grey);
+    }
+
+    /* ── ENQUIRY FORM ── */
+    .enquiry-section { background: var(--navy); }
+    .enquiry-section .section-title { color: white; }
+    .enquiry-section .section-sub { color: rgba(255,255,255,0.6); }
+    .enquiry-section .section-eyebrow { color: var(--blue-light); }
+
+    .enquiry-grid {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 64px;
+      align-items: start;
+      margin-top: 48px;
+    }
+
+    .enquiry-points {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .enquiry-point {
+      display: flex;
+      gap: 16px;
+    }
+
+    .eq-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(23,92,245,0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .eq-icon svg { width: 20px; height: 20px; color: var(--blue-light); }
+    .eq-title { font-size: 14px; font-weight: 600; color: white; margin-bottom: 4px; }
+    .eq-sub { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+    .form-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 32px;
+    }
+
+    .form-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+
+    .form-card .form-sub {
+      font-size: 13px;
+      color: var(--dark-grey);
+      margin-bottom: 24px;
+    }
+
+    .fg { margin-bottom: 14px; }
+
+    .lbl {
       display: block;
       font-size: 12px;
       font-weight: 600;
       color: var(--navy);
-      margin-bottom: 6px;
-      letter-spacing: 0.2px;
+      margin-bottom: 5px;
     }
 
-    .form-input {
+    .inp, .sel, .ta {
       width: 100%;
-      padding: 12px 14px;
+      padding: 11px 14px;
       border: 1.5px solid var(--mid-grey);
-      border-radius: 10px;
+      border-radius: 9px;
       font-family: 'Rubik', sans-serif;
-      font-size: 15px;
-      font-weight: 400;
+      font-size: 14px;
       color: var(--navy);
       background: var(--white);
-      transition: border-color 0.2s, box-shadow 0.2s;
       outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
       -webkit-appearance: none;
     }
 
-    .form-input:focus {
+    .inp:focus, .sel:focus, .ta:focus {
       border-color: var(--blue);
       box-shadow: 0 0 0 3px rgba(23,92,245,0.1);
     }
 
-    .form-input::placeholder { color: var(--mid-grey); }
+    .ta { resize: vertical; min-height: 80px; }
 
-    /* ─── FUNDING TOGGLE ─── */
-    .funding-toggle {
-      border: 1.5px dashed var(--mid-grey);
-      border-radius: 10px;
-      padding: 13px 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      margin-bottom: 12px;
-      user-select: none;
-    }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-    .funding-toggle:hover { border-color: var(--blue); background: #F6F9FF; }
-    .funding-toggle.active { border-color: var(--blue); background: #F0F5FF; border-style: solid; }
-
-    .toggle-box {
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--mid-grey);
-      border-radius: 5px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-
-    .funding-toggle.active .toggle-box {
-      background: var(--blue);
-      border-color: var(--blue);
-    }
-
-    .toggle-check { display: none; }
-    .funding-toggle.active .toggle-check { display: block; }
-
-    .toggle-check svg { width: 12px; height: 12px; color: white; }
-
-    .toggle-content { flex: 1; }
-    .toggle-title { font-size: 13px; font-weight: 600; color: var(--navy); display: flex; align-items: center; gap: 7px; }
-    .toggle-sub { font-size: 12px; color: var(--dark-grey); margin-top: 2px; }
-
-    .free-pill {
-      background: #E8F5EC;
-      color: #1B7D3A;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 20px;
-      letter-spacing: 0.3px;
-    }
-
-    /* ─── UPLOAD ─── */
-    .upload-area {
-      border: 1.5px dashed var(--mid-grey);
-      border-radius: 10px;
-      padding: 18px 14px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      margin-bottom: 16px;
-      position: relative;
-    }
-
-    .upload-area:hover, .upload-area.dragging {
-      border-color: var(--blue);
-      background: #F6F9FF;
-    }
-
-    .upload-area input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
-
-    .upload-icon-wrap {
-      width: 40px;
-      height: 40px;
-      background: var(--blue-light);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 10px;
-    }
-
-    .upload-icon-wrap svg { width: 20px; height: 20px; color: var(--blue); }
-
-    .upload-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
-    .upload-sub { font-size: 12px; color: var(--dark-grey); }
-
-    .file-list { margin-top: 10px; text-align: left; display: flex; flex-direction: column; gap: 6px; }
-
-    .file-pill {
-      background: var(--light-bg);
-      border-radius: 8px;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-    }
-
-    .file-pill-name { flex: 1; color: var(--navy); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .file-pill-size { color: var(--dark-grey); }
-    .file-pill-remove { cursor: pointer; color: var(--mid-grey); font-size: 16px; line-height: 1; transition: color 0.15s; }
-    .file-pill-remove:hover { color: var(--error); }
-
-    /* ─── SUBMIT BUTTON ─── */
     .submit-btn {
       width: 100%;
-      padding: 15px;
+      padding: 14px;
       background: var(--blue);
-      color: var(--white);
+      color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 9px;
       font-family: 'Rubik', sans-serif;
       font-size: 15px;
       font-weight: 600;
@@ -498,612 +669,744 @@
       justify-content: center;
       gap: 8px;
       transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-      letter-spacing: 0.2px;
+      margin-top: 6px;
     }
 
     .submit-btn:hover {
       background: #1350D9;
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(23,92,245,0.3);
+      box-shadow: 0 6px 20px rgba(23,92,245,0.35);
     }
 
-    .submit-btn:active { transform: translateY(0); box-shadow: none; }
-    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+    .submit-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none; }
 
-    .submit-arrow { transition: transform 0.2s; }
-    .submit-btn:hover .submit-arrow { transform: translateX(3px); }
-
-    /* ─── ERROR ─── */
-    .error-msg {
-      background: #FFF0F0;
-      color: var(--error);
-      border-radius: 8px;
-      padding: 10px 13px;
-      font-size: 13px;
-      margin-top: 10px;
-      display: none;
-      border-left: 3px solid var(--error);
-    }
-
-    .error-msg.visible { display: block; }
-
-    /* ─── SUCCESS ─── */
-    .success-card {
-      background: var(--white);
-      border-radius: 14px;
-      padding: 40px 20px;
+    .form-success {
       text-align: center;
-      box-shadow: var(--shadow-sm);
+      padding: 20px 0;
       display: none;
-      animation: fadeUp 0.5s ease both;
     }
 
-    .success-card.visible { display: block; }
+    .form-success.on { display: block; }
 
-    .success-icon-wrap {
-      width: 64px;
-      height: 64px;
+    .success-icon {
+      width: 56px;
+      height: 56px;
       background: #E6F9ED;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 16px;
+      margin: 0 auto 14px;
     }
 
-    .success-icon-wrap svg { width: 30px; height: 30px; color: var(--success); }
+    .success-icon svg { width: 26px; height: 26px; color: #1DB954; }
+    .success-title { font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .success-sub { font-size: 14px; color: var(--dark-grey); line-height: 1.6; }
 
-    .success-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 8px;
-      letter-spacing: -0.3px;
+    /* ── LENDER SECTION ── */
+    .lender-section { background: var(--light-bg); }
+
+    .lender-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      margin-top: 0;
     }
 
-    .success-sub {
+    .lender-points {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .lender-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
       font-size: 14px;
       color: var(--dark-grey);
-      line-height: 1.65;
+      line-height: 1.55;
     }
 
-    /* ─── ABOUT ─── */
-    .about-card {
-      background: var(--white);
-      border-radius: 14px;
-      padding: 20px 16px;
-      margin-bottom: 12px;
-      box-shadow: var(--shadow-sm);
-      animation: fadeUp 0.4s ease 0.25s both;
-    }
-
-    .about-card p {
-      font-size: 13px;
-      color: var(--dark-grey);
-      line-height: 1.65;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 14px;
-    }
-
-    .stat-box {
-      background: var(--light-bg);
-      border-radius: 10px;
-      padding: 13px 8px;
-      text-align: center;
-    }
-
-    .stat-num {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--blue);
-      display: block;
-      letter-spacing: -0.5px;
-    }
-
-    .stat-lbl {
-      font-size: 11px;
-      color: var(--dark-grey);
+    .lender-point::before {
+      content: '';
+      width: 22px;
+      height: 22px;
+      background: var(--blue-light);
+      border-radius: 6px;
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 10l3.5 3.5L15 7' stroke='%23175CF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-size: 14px;
+      background-repeat: no-repeat;
+      background-position: center;
       margin-top: 2px;
     }
 
-    /* ─── STICKY BROKER CTA ─── */
-    .sticky-cta {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(244,246,252,0.95);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-top: 1px solid var(--blue-light);
-      padding: 12px 16px;
-      z-index: 100;
+    .lender-visual {
+      background: var(--navy);
+      border-radius: 20px;
+      padding: 36px;
+      color: white;
     }
 
-    .sticky-inner {
-      max-width: 540px;
+    .lender-visual h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    .lender-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .lender-stat {
+      background: rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .lender-stat-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--blue-light);
+      letter-spacing: -0.5px;
+    }
+
+    .lender-stat-lbl {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 3px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      padding: 56px 40px 32px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .footer-inner {
+      max-width: 1140px;
       margin: 0 auto;
     }
 
-    .call-btn {
-      width: 100%;
-      padding: 14px;
-      background: var(--white);
-      border: 1.5px solid var(--mid-grey);
-      border-radius: 10px;
-      font-family: 'Rubik', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--navy);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 32px;
+    }
+
+    .footer-brand img {
+      height: 26px;
+      filter: brightness(0) invert(1);
+      margin-bottom: 14px;
+    }
+
+    .footer-brand p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.65;
+    }
+
+    .footer-col h4 {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .footer-col a {
+      display: block;
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
       text-decoration: none;
-      transition: all 0.2s;
-      box-shadow: var(--shadow-sm);
+      margin-bottom: 8px;
+      transition: color 0.15s;
     }
 
-    .call-btn:hover {
-      border-color: var(--blue);
-      color: var(--blue);
-      box-shadow: 0 4px 16px rgba(23,92,245,0.12);
-    }
+    .footer-col a:hover { color: white; }
 
-    .call-icon {
-      width: 30px;
-      height: 30px;
-      background: var(--blue-light);
-      border-radius: 50%;
+    .footer-bottom {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
     }
 
-    .call-icon svg { width: 14px; height: 14px; color: var(--blue); }
+    /* ── SPINNER ── */
+    .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.75s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ─── NOT FOUND ─── */
-    .not-found {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 40px 24px;
-      text-align: center;
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      section { padding: 64px 20px; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .loans-grid { grid-template-columns: repeat(2, 1fr); }
+      .dna-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .enquiry-grid { grid-template-columns: 1fr; gap: 40px; }
+      .lender-grid { grid-template-columns: 1fr; gap: 40px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
     }
 
-    .not-found .nf-icon {
-      width: 72px;
-      height: 72px;
-      background: var(--blue-light);
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-    }
-
-    .not-found .nf-icon svg { width: 32px; height: 32px; color: var(--blue); }
-    .not-found h2 { font-size: 24px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
-    .not-found p { font-size: 14px; color: var(--dark-grey); line-height: 1.6; }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (min-width: 540px) {
-      .hero { height: 340px; }
-      .hero-address { font-size: 28px; }
+    @media (max-width: 540px) {
+      .loans-grid { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; }
+      .row2 { grid-template-columns: 1fr; }
+      .about-visual { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <!-- LOADING -->
-  <div id="loadingState" class="loading-state">
-    <div class="spinner"></div>
-    <p style="font-size:13px;color:var(--dark-grey);font-weight:400">Loading finance estimate…</p>
-  </div>
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <img src="dealt-logo.png" alt="Dealt" onerror="this.style.display='none';document.getElementById('navLogoFb').style.display='block'">
+      <span id="navLogoFb" class="nav-logo-fb" style="display:none">dealt</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#loan-types">Loan Types</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#lenders">For Lenders</a></li>
+      <li><a href="#enquire" class="nav-cta">Get Started</a></li>
+    </ul>
+  </nav>
 
-  <!-- MAIN -->
-  <div id="mainContent" style="display:none">
+  <!-- HERO -->
+  <section class="hero">
+    <video class="hero-video" autoplay muted loop playsinline poster="">
+      <source src="dealt-video.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span></span>
+        Australia's Commercial Real Estate Finance Marketplace
+      </div>
+      <h1>See lenders compete<br>for <em>your</em> loan</h1>
+      <p class="hero-sub">The world's first real-time marketplace for commercial real estate finance. Put your deal in front of Australia's leading lenders and choose the terms that work for you.</p>
+      <div class="hero-actions">
+        <a href="#enquire" class="btn-primary">Get Dealt Today →</a>
+        <a href="#how-it-works" class="btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+          How It Works
+        </a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      Scroll
+    </div>
+  </section>
 
-    <!-- HERO -->
-    <div class="hero">
-      <div class="hero-bg" id="heroBg"></div>
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <div class="hero-logo">
-          <img src="dealt-logo.png" alt="Dealt" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='block'">
-          <span id="logoFallback" style="display:none;font-size:20px;font-weight:700;color:white;letter-spacing:-0.5px">dealt</span>
+  <!-- HOW IT WORKS -->
+  <section class="how-section" id="how-it-works">
+    <div class="section-inner">
+      <div class="section-eyebrow">How It Works</div>
+      <div class="section-title">Three steps to your<br>best deal</div>
+      <p class="section-sub">We make the deceptively complex world of commercial and development finance incredibly simple.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3>Put Your Best Foot Forward</h3>
+          <p>Create a first-rate deal proposal in minutes. We use AI to help you present your loan request in the best possible light to attract lender attention.</p>
         </div>
-        <div class="hero-address-block">
-          <div class="hero-eyebrow">Finance Estimate For</div>
-          <div class="hero-address" id="heroAddress">Loading…</div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3>Watch Lenders Compete</h3>
+          <p>Submit your loan to the deal room and watch as lenders bid for your business. Obtain the best interest rate and terms possible through real market competition.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3>Choose Your Deal</h3>
+          <p>Get offers from lenders and select the loan that's right for you. Receive an approved term sheet and finalise your loan with the lender of your choice.</p>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="main">
+  <!-- LOAN TYPES -->
+  <section id="loan-types">
+    <div class="section-inner">
+      <div class="section-eyebrow">Loan Solutions</div>
+      <div class="section-title">Finance for every<br>real estate need</div>
+      <p class="section-sub">From $100,000 to $500 million, across all real estate asset classes. Completely independent of lenders.</p>
+      <div class="loans-grid">
 
-      <!-- CONTEXT BANNER -->
-      <div class="context-banner">
-        <div class="context-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-        </div>
-        <div class="context-text" id="contextText">Current market rates with competitive lenders offering higher LVRs</div>
-      </div>
-
-      <!-- METRICS -->
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg>
-            Rates From
+        <div class="loan-card">
+          <div class="loan-icon"><img src="images/Development @3x.png" alt="Development Finance"></div>
+          <h3>Development Finance</h3>
+          <p>Finance the development of new commercial properties from townhouses to 35-floor CBD office buildings.</p>
+          <div class="loan-stats">
+            <span class="loan-stat">Up to 90% TDC</span>
+            <span class="loan-stat">Rates from 6%</span>
+            <span class="loan-stat">$100K–$250M</span>
           </div>
-          <div class="metric-value" id="rateFrom">—</div>
-          <div class="metric-sub">p.a. indicative</div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 9h10M7 13h6" stroke-linecap="round"/></svg>
-            Max LVR
+
+        <div class="loan-card">
+          <div class="loan-icon"><img src="images/Investment.png" alt="Investment Finance"></div>
+          <h3>Investment Finance</h3>
+          <p>Finance a wide variety of commercial investments from business premises via SMSF to suburban office buildings.</p>
+          <div class="loan-stats">
+            <span class="loan-stat">Up to 75% LTV</span>
+            <span class="loan-stat">Terms up to 10 years</span>
+            <span class="loan-stat">Non-recourse options</span>
           </div>
-          <div class="metric-value" id="maxLvr">—</div>
-          <div class="metric-sub">loan to value ratio</div>
+        </div>
+
+        <div class="loan-card">
+          <div class="loan-icon"><img src="images/Site.png" alt="Site Finance"></div>
+          <h3>Site Finance</h3>
+          <p>Reliable funding for land held waiting for development approvals or joint venture negotiations.</p>
+          <div class="loan-stats">
+            <span class="loan-stat">LVR up to 70%</span>
+            <span class="loan-stat">Short term options</span>
+            <span class="loan-stat">Rates from 6%</span>
+          </div>
+        </div>
+
+        <div class="loan-card">
+          <div class="loan-icon"><img src="images/Bridging.png" alt="Bridging Finance"></div>
+          <h3>Bridging Finance</h3>
+          <p>Short-term solutions including caveat loans, first and second mortgages for urgent borrowing needs.</p>
+          <div class="loan-stats">
+            <span class="loan-stat">LVR up to 80%</span>
+            <span class="loan-stat">Terms from 3 months</span>
+            <span class="loan-stat">Rates from 1% p/m</span>
+          </div>
+        </div>
+
+        <div class="loan-card">
+          <div class="loan-icon"><img src="images/Land Subdivision.png" alt="Land Subdivision"></div>
+          <h3>Land Subdivision</h3>
+          <p>Specialist funding for land subdivision projects with progressive drawdowns to match your development timeline.</p>
+          <div class="loan-stats">
+            <span class="loan-stat">Competitive rates</span>
+            <span class="loan-stat">Flexible drawdowns</span>
+          </div>
+        </div>
+
+        <div class="loan-card">
+          <div class="loan-icon"><img src="images/Residual Stock.png" alt="Residual Stock"></div>
+          <h3>Residual Stock</h3>
+          <p>Flexible refinancing on completion for developers who need practical funding solutions beyond standard bank metrics.</p>
+          <div class="loan-stats">
+            <span class="loan-stat">Flexible serviceability</span>
+            <span class="loan-stat">Tailored structures</span>
+          </div>
+        </div>
+
+        <div class="loan-card">
+          <div class="loan-icon"><img src="images/Mezzanine.png" alt="Mezzanine Finance"></div>
+          <h3>Mezzanine & Private Equity</h3>
+          <p>Layer your capital stack to reach leverage as high as 85% LTC with fair, reasonable mezzanine and equity partners.</p>
+          <div class="loan-stats">
+            <span class="loan-stat">Up to 85% LTC</span>
+            <span class="loan-stat">Rates from 15% pa</span>
+            <span class="loan-stat">Fast turnaround</span>
+          </div>
+        </div>
+
+        <div class="loan-card">
+          <div class="loan-icon"><img src="images/SMSF.png" alt="SMSF Finance"></div>
+          <h3>SMSF Finance</h3>
+          <p>Fully complying and flexible SMSF finance options without the bank costs, delays or frustration of cross-collateralised facilities.</p>
+          <div class="loan-stats">
+            <span class="loan-stat">30 year loan term</span>
+            <span class="loan-stat">5 yrs interest only</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEO SECTION -->
+  <section class="video-section">
+    <div class="section-inner" style="text-align:center">
+      <div class="section-eyebrow">See It In Action</div>
+      <div class="section-title">The smarter way to<br>finance real estate</div>
+      <p class="section-sub" style="margin:0 auto">Watch how dealt puts you in control of the entire finance process from proposal to approval.</p>
+      <div class="video-wrap">
+        <video controls poster="" playsinline>
+          <source src="Animation_1.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- DNA / VALUES -->
+  <section class="dna-section">
+    <div class="section-inner">
+      <div class="section-eyebrow">Dealt DNA</div>
+      <div class="section-title">Built on principles<br>that matter</div>
+      <div class="dna-grid">
+        <div class="dna-card">
+          <div class="dna-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <h3>Keeping It Simple</h3>
+            <p>The world is complex enough. Our goal is to ask only for what we need and to avoid jargon. We make the deceptively complex world of commercial finance incredibly simple.</p>
+          </div>
+        </div>
+        <div class="dna-card">
+          <div class="dna-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <h3>No Side Deals</h3>
+            <p>We provide a truly independent marketplace where market forces prevail. No kickbacks, no preferred lenders, no hidden agendas. Just the best deal for you.</p>
+          </div>
+        </div>
+        <div class="dna-card">
+          <div class="dna-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div>
+            <h3>You're in the Driver's Seat</h3>
+            <p>You control the process from start to finish. You decide who you want to deal with, what terms you accept, and when you move forward. It's your loan.</p>
+          </div>
+        </div>
+        <div class="dna-card">
+          <div class="dna-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div>
+            <h3>Real Estate in Our Blood</h3>
+            <p>Developed by people who live and breathe commercial real estate. We understand your challenges because we've faced them ourselves. You're in experienced hands.</p>
+          </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- DEAL OVERVIEW -->
-      <div class="detail-card" id="dealOverview">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Deal Overview
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num">$500M+</div>
+        <div class="stat-lbl">Maximum Loan Size</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">8</div>
+        <div class="stat-lbl">Loan Product Types</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">100%</div>
+        <div class="stat-lbl">Independent of Lenders</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">AI</div>
+        <div class="stat-lbl">Powered Optimisation</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-inner">
+      <div class="about-grid">
+        <div class="about-text">
+          <div class="section-eyebrow">About Dealt</div>
+          <div class="section-title">Commercial real estate finance, reimagined</div>
+          <p class="section-sub">Dealt is Australia's first real-time commercial real estate finance marketplace. We connect borrowers directly with the lenders most suited to their deal — eliminating the friction, opacity and inefficiency of traditional finance broking.</p>
+          <ul class="about-list">
+            <li>From $100,000 to $500 million across all real estate asset classes</li>
+            <li>Completely independent of lenders — we work for you</li>
+            <li>Use AI to optimise your success and achieve the most competitive rate</li>
+            <li>Transparent process from proposal to approved term sheet</li>
+            <li>Backed by a team with deep commercial real estate expertise</li>
+          </ul>
         </div>
-        <div class="detail-row">
-          <span class="detail-label">Finance Type</span>
-          <span class="detail-value" id="financeType">—</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Loan Amount</span>
-          <span class="detail-value" id="loanAmount">—</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Security Value</span>
-          <span class="detail-value" id="securityValue">—</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Loan Term</span>
-          <span class="detail-value" id="loanTerm">—</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Est. Establishment Fee</span>
-          <span class="detail-value" id="estFee">—</span>
+        <div class="about-visual">
+          <div class="about-stat-box">
+            <span class="about-stat-num">$100K</span>
+            <div class="about-stat-lbl">Minimum Loan</div>
+          </div>
+          <div class="about-stat-box">
+            <span class="about-stat-num">$500M</span>
+            <div class="about-stat-lbl">Maximum Loan</div>
+          </div>
+          <div class="about-stat-box">
+            <span class="about-stat-num">All</span>
+            <div class="about-stat-lbl">Asset Classes</div>
+          </div>
+          <div class="about-stat-box">
+            <span class="about-stat-num">AI</span>
+            <div class="about-stat-lbl">Optimised</div>
+          </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- FUNDING TABLE -->
-      <div class="funding-table-card" id="fundingTableCard">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18" stroke-linecap="round"/></svg>
-          Personalised Funding Table
+  <!-- LENDERS SECTION -->
+  <section class="lender-section" id="lenders">
+    <div class="section-inner">
+      <div class="lender-grid">
+        <div>
+          <div class="section-eyebrow">For Lenders</div>
+          <div class="section-title">Join our deck of lenders</div>
+          <p class="section-sub">Be part of Australia's growing marketplace for real estate finance deals. Access pre-qualified borrowers targeted to your exact lending criteria.</p>
+          <div class="lender-points">
+            <div class="lender-point">Access to thousands of real estate loans, targeted to your lending criteria</div>
+            <div class="lender-point">Key asset and loan metrics at your fingertips before you commit</div>
+            <div class="lender-point">Dynamic calculations to refine your bids in real time</div>
+            <div class="lender-point">External benchmarking and credit checks built in</div>
+          </div>
+          <a href="#enquire" class="btn-primary" style="margin-top:32px;display:inline-flex">Register as a Lender →</a>
         </div>
-        <table class="funding-table">
-          <thead>
-            <tr>
-              <th>Lender</th>
-              <th>Rate</th>
-              <th>LVR</th>
-              <th>Loan</th>
-            </tr>
-          </thead>
-          <tbody id="fundingTableBody"></tbody>
-        </table>
-      </div>
-
-      <!-- LEAD FORM -->
-      <div class="lead-form-card" id="leadFormCard">
-        <div class="form-header">
-          <h3>Get Your Estimate</h3>
-          <p>Enter your details to receive a personalised finance estimate from our team.</p>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Your Name *</label>
-          <input type="text" class="form-input" id="leadName" placeholder="Full name" autocomplete="name">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Mobile Number *</label>
-          <input type="tel" class="form-input" id="leadMobile" placeholder="0400 000 000" autocomplete="tel">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email Address *</label>
-          <input type="email" class="form-input" id="leadEmail" placeholder="you@example.com" autocomplete="email">
-        </div>
-
-        <!-- FUNDING TABLE TOGGLE -->
-        <div class="funding-toggle" id="fundingToggle" onclick="toggleFunding()">
-          <div class="toggle-box">
-            <div class="toggle-check">
-              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5 6 4.5 9 10.5 3"/></svg>
+        <div class="lender-visual">
+          <h3>Lender Benefits</h3>
+          <div class="lender-stats">
+            <div class="lender-stat">
+              <div class="lender-stat-num">1000s</div>
+              <div class="lender-stat-lbl">Targeted deals</div>
+            </div>
+            <div class="lender-stat">
+              <div class="lender-stat-num">Real-time</div>
+              <div class="lender-stat-lbl">Bid system</div>
+            </div>
+            <div class="lender-stat">
+              <div class="lender-stat-num">Pre-qual</div>
+              <div class="lender-stat-lbl">Borrowers</div>
+            </div>
+            <div class="lender-stat">
+              <div class="lender-stat-num">AI</div>
+              <div class="lender-stat-lbl">Matched deals</div>
             </div>
           </div>
-          <div class="toggle-content">
-            <div class="toggle-title">Include a Funding Table <span class="free-pill">FREE</span></div>
-            <div class="toggle-sub">See loan amounts, LVRs & interest costs</div>
-          </div>
-        </div>
-
-        <!-- DOC UPLOAD -->
-        <div class="upload-area" id="uploadArea">
-          <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFiles(this.files)">
-          <div class="upload-icon-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          </div>
-          <div class="upload-title">Attach Supporting Documents</div>
-          <div class="upload-sub">Contract of sale, valuation, DA, financials<br>PDF, DOC, JPG up to 10MB each</div>
-          <div class="file-list" id="fileList"></div>
-        </div>
-
-        <button class="submit-btn" id="submitBtn" onclick="submitLead()">
-          Submit Request <span class="submit-arrow">→</span>
-        </button>
-        <div class="error-msg" id="errorMsg"></div>
-      </div>
-
-      <!-- SUCCESS -->
-      <div class="success-card" id="successCard">
-        <div class="success-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <div class="success-title">Request Received</div>
-        <p class="success-sub" id="successMsg">Thanks! Our team will be in touch shortly with your personalised finance estimate.</p>
-      </div>
-
-      <!-- ABOUT -->
-      <div class="about-card">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01" stroke-linecap="round"/></svg>
-          About Dealt
-        </div>
-        <p>Dealt connects borrowers with Australia's leading commercial and residential property finance lenders. We specialise in development finance, construction loans, and investment lending — with access to 50+ lenders across bank and non-bank markets.</p>
-        <div class="stats-grid">
-          <div class="stat-box">
-            <span class="stat-num">50+</span>
-            <div class="stat-lbl">Lending Partners</div>
-          </div>
-          <div class="stat-box">
-            <span class="stat-num">$2B+</span>
-            <div class="stat-lbl">Loans Settled</div>
-          </div>
-          <div class="stat-box">
-            <span class="stat-num">48hr</span>
-            <div class="stat-lbl">Response Time</div>
-          </div>
         </div>
       </div>
-
     </div>
-  </div>
+  </section>
 
-  <!-- NOT FOUND -->
-  <div id="notFound" style="display:none">
-    <div class="not-found">
-      <div class="nf-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </div>
-      <h2>Deal Not Found</h2>
-      <p>This finance estimate link may have expired or is invalid.<br>Please contact your broker for a new link.</p>
-    </div>
-  </div>
-
-  <!-- STICKY BROKER CTA -->
-  <div class="sticky-cta" id="stickyCta" style="display:none">
-    <div class="sticky-inner">
-      <a class="call-btn" href="tel:+61" id="callBtn">
-        <div class="call-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+  <!-- ENQUIRY FORM -->
+  <section class="enquiry-section" id="enquire">
+    <div class="section-inner">
+      <div class="section-eyebrow">Get Started</div>
+      <div class="section-title">Ready to get dealt?</div>
+      <p class="section-sub">Tell us about your project and we'll connect you with the right lenders for your deal.</p>
+      <div class="enquiry-grid">
+        <div>
+          <div class="enquiry-points">
+            <div class="enquiry-point">
+              <div class="eq-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+              </div>
+              <div>
+                <div class="eq-title">Submit your proposal in minutes</div>
+                <div class="eq-sub">Tell us about your project, property type and funding requirements.</div>
+              </div>
+            </div>
+            <div class="enquiry-point">
+              <div class="eq-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <div>
+                <div class="eq-title">Lenders compete for your deal</div>
+                <div class="eq-sub">Watch as Australia's leading lenders bid for your loan in real time.</div>
+              </div>
+            </div>
+            <div class="enquiry-point">
+              <div class="eq-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <div class="eq-title">Choose the deal that suits you</div>
+                <div class="eq-sub">Select your preferred offer and receive an approved term sheet online.</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <span id="callBtnText">Call James Storey</span>
-      </a>
+
+        <div class="form-card">
+          <h3>Start Your Application</h3>
+          <p class="form-sub">We'll be in touch within 24 hours.</p>
+
+          <div id="enquiryForm">
+            <div class="row2">
+              <div class="fg">
+                <label class="lbl">First Name *</label>
+                <input type="text" class="inp" id="firstName" placeholder="James">
+              </div>
+              <div class="fg">
+                <label class="lbl">Last Name *</label>
+                <input type="text" class="inp" id="lastName" placeholder="Storey">
+              </div>
+            </div>
+            <div class="fg">
+              <label class="lbl">Email Address *</label>
+              <input type="email" class="inp" id="email" placeholder="james@example.com">
+            </div>
+            <div class="fg">
+              <label class="lbl">Mobile Number *</label>
+              <input type="tel" class="inp" id="mobile" placeholder="0400 000 000">
+            </div>
+            <div class="fg">
+              <label class="lbl">Loan Type *</label>
+              <select class="sel" id="loanType">
+                <option value="">Select loan type…</option>
+                <option>Development Finance</option>
+                <option>Investment Finance</option>
+                <option>Site Finance</option>
+                <option>Bridging Finance</option>
+                <option>Land Subdivision</option>
+                <option>Residual Stock</option>
+                <option>Mezzanine / Private Equity</option>
+                <option>SMSF Finance</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label class="lbl">Loan Amount *</label>
+              <select class="sel" id="loanSize">
+                <option value="">Select range…</option>
+                <option>$100K – $500K</option>
+                <option>$500K – $2M</option>
+                <option>$2M – $10M</option>
+                <option>$10M – $50M</option>
+                <option>$50M – $250M</option>
+                <option>$250M+</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label class="lbl">Tell us about your project</label>
+              <textarea class="ta" id="message" placeholder="Brief description of your property, location, and what you're looking to achieve…"></textarea>
+            </div>
+            <button class="submit-btn" id="submitBtn" onclick="submitEnquiry()">
+              Submit Enquiry <span id="btnArrow">→</span>
+            </button>
+          </div>
+
+          <div class="form-success" id="formSuccess">
+            <div class="success-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="success-title">Enquiry Received!</div>
+            <p class="success-sub">Thanks! One of our team will be in touch within 24 hours to discuss your project.</p>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="dealt-logo.png" alt="Dealt" onerror="this.style.display='none'">
+          <p>Australia's first real-time marketplace for commercial real estate finance. Connecting borrowers with the right lenders for their deal.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Finance</h4>
+          <a href="#loan-types">Development Finance</a>
+          <a href="#loan-types">Investment Finance</a>
+          <a href="#loan-types">Bridging Finance</a>
+          <a href="#loan-types">Mezzanine Finance</a>
+          <a href="#loan-types">SMSF Finance</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="#about">About Dealt</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#lenders">For Lenders</a>
+          <a href="#enquire">Contact Us</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <a href="mailto:info@dealt.com.au">info@dealt.com.au</a>
+          <a href="tel:+61">Call Us</a>
+          <a href="/admin">Admin Login</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 Dealt Pty Ltd. All rights reserved.</span>
+        <span>dealt.com.au</span>
+      </div>
+    </div>
+  </footer>
 
   <script>
-    let dealData = null;
-    let uploadedFiles = [];
-    let fundingEnabled = false;
+    async function submitEnquiry() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName  = document.getElementById('lastName').value.trim();
+      const email     = document.getElementById('email').value.trim();
+      const mobile    = document.getElementById('mobile').value.trim();
+      const loanType  = document.getElementById('loanType').value;
+      const loanSize  = document.getElementById('loanSize').value;
+      const message   = document.getElementById('message').value.trim();
 
-    async function init() {
-      const params = new URLSearchParams(window.location.search);
-      const slug = params.get('d') || params.get('deal');
-      if (!slug) { showNotFound(); return; }
-
-      try {
-        const res = await fetch(`/.netlify/functions/get-deal?slug=${encodeURIComponent(slug)}`);
-        if (!res.ok) throw new Error('Not found');
-        dealData = await res.json();
-        renderDeal(dealData);
-      } catch (e) {
-        showNotFound();
-      }
-    }
-
-    function renderDeal(d) {
-      document.title = `Finance Estimate | ${d.address}`;
-      document.getElementById('heroAddress').textContent = d.address;
-
-      // Hero image
-      const bg = document.getElementById('heroBg');
-      if (d.hero_image_url) {
-        bg.style.backgroundImage = `url('${d.hero_image_url}')`;
-      } else {
-        bg.classList.add('no-image');
+      if (!firstName || !lastName || !email || !mobile || !loanType || !loanSize) {
+        alert('Please fill in all required fields.');
+        return;
       }
 
-      // Metrics
-      document.getElementById('rateFrom').textContent = d.rate_from ? `${d.rate_from}%` : '—';
-      document.getElementById('maxLvr').textContent = d.max_lvr ? `${d.max_lvr}%` : '—';
-
-      // Detail rows
-      document.getElementById('financeType').textContent = d.finance_type || '—';
-      document.getElementById('loanAmount').textContent = d.loan_amount ? fmt(d.loan_amount) : '—';
-      document.getElementById('securityValue').textContent = d.security_value ? fmt(d.security_value) : '—';
-      document.getElementById('loanTerm').textContent = d.loan_term_months ? `${d.loan_term_months} months` : '—';
-
-      if (d.loan_amount) {
-        const fee = d.loan_amount * (d.establishment_fee_pct || 0.01);
-        document.getElementById('estFee').textContent = fmt(fee) + ` (${((d.establishment_fee_pct||0.01)*100).toFixed(1)}%)`;
-      }
-
-      if (d.context_note) document.getElementById('contextText').textContent = d.context_note;
-
-      // Broker CTA
-      if (d.broker_name) document.getElementById('callBtnText').textContent = `Call ${d.broker_name}`;
-      if (d.broker_phone) document.getElementById('callBtn').href = `tel:${d.broker_phone.replace(/\s/g,'')}`;
-
-      // Success message
-      document.getElementById('successMsg').textContent =
-        `Thanks! ${d.broker_name || 'Our team'} will be in touch shortly with your personalised finance estimate.`;
-
-      document.getElementById('loadingState').style.display = 'none';
-      document.getElementById('mainContent').style.display = 'block';
-      document.getElementById('stickyCta').style.display = 'block';
-    }
-
-    function toggleFunding() {
-      fundingEnabled = !fundingEnabled;
-      document.getElementById('fundingToggle').classList.toggle('active', fundingEnabled);
-      if (fundingEnabled && dealData) {
-        buildFundingTable(dealData);
-        document.getElementById('fundingTableCard').classList.add('visible');
-      } else {
-        document.getElementById('fundingTableCard').classList.remove('visible');
-      }
-    }
-
-    function buildFundingTable(d) {
-      const sec = d.security_value || 0;
-      const base = d.rate_from || 6.5;
-      const rows = [
-        { type: 'Major Bank',    badge: 'Best rate',   rate: base,       lvr: 55 },
-        { type: 'Tier 2 Bank',   badge: '',            rate: base + 0.5, lvr: 60 },
-        { type: 'Non-Bank',      badge: 'Higher LVR',  rate: base + 1.2, lvr: d.max_lvr || 70 },
-      ];
-      document.getElementById('fundingTableBody').innerHTML = rows.map(r => {
-        const loan = sec * r.lvr / 100;
-        return `<tr>
-          <td>${r.type}${r.badge ? `<br><span class="table-badge">${r.badge}</span>` : ''}</td>
-          <td>${r.rate.toFixed(2)}%</td>
-          <td>${r.lvr}%</td>
-          <td>${fmt(loan)}</td>
-        </tr>`;
-      }).join('');
-    }
-
-    // File upload
-    function handleFiles(files) {
-      for (const f of files) {
-        if (!uploadedFiles.find(x => x.name === f.name)) uploadedFiles.push(f);
-      }
-      renderFiles();
-    }
-
-    function renderFiles() {
-      document.getElementById('fileList').innerHTML = uploadedFiles.map((f,i) => `
-        <div class="file-pill">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#175CF5" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span class="file-pill-name">${f.name}</span>
-          <span class="file-pill-size">${(f.size/1024).toFixed(0)}KB</span>
-          <span class="file-pill-remove" onclick="removeFile(${i})">×</span>
-        </div>`).join('');
-    }
-
-    function removeFile(i) {
-      uploadedFiles.splice(i,1);
-      renderFiles();
-    }
-
-    // Drag & drop
-    const ua = document.getElementById('uploadArea');
-    ua.addEventListener('dragover', e => { e.preventDefault(); ua.classList.add('dragging'); });
-    ua.addEventListener('dragleave', () => ua.classList.remove('dragging'));
-    ua.addEventListener('drop', e => {
-      e.preventDefault();
-      ua.classList.remove('dragging');
-      handleFiles(e.dataTransfer.files);
-    });
-
-    async function submitLead() {
-      const name  = document.getElementById('leadName').value.trim();
-      const mobile= document.getElementById('leadMobile').value.trim();
-      const email = document.getElementById('leadEmail').value.trim();
-      const err   = document.getElementById('errorMsg');
-
-      if (!name || !mobile || !email) {
-        err.textContent = 'Please fill in all required fields.';
-        err.classList.add('visible'); return;
-      }
-      if (!/\S+@\S+\.\S+/.test(email)) {
-        err.textContent = 'Please enter a valid email address.';
-        err.classList.add('visible'); return;
-      }
-
-      err.classList.remove('visible');
       const btn = document.getElementById('submitBtn');
       btn.disabled = true;
-      btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px;border-color:rgba(255,255,255,0.3);border-top-color:white"></div>&nbsp;Submitting…';
+      btn.innerHTML = '<div class="spinner"></div>&nbsp;Submitting…';
 
       try {
-        let docUrls = [];
-        if (uploadedFiles.length) {
-          const fd = new FormData();
-          uploadedFiles.forEach(f => fd.append('files', f));
-          fd.append('deal_id', dealData.id);
-          const ur = await fetch('/.netlify/functions/upload-doc', { method:'POST', body:fd });
-          docUrls = (await ur.json()).urls || [];
-        }
-
         const res = await fetch('/.netlify/functions/submit-lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ deal_id: dealData.id, name, mobile, email, funding_table_requested: fundingEnabled, doc_urls: docUrls })
+          body: JSON.stringify({
+            deal_id: 'website-enquiry',
+            name: `${firstName} ${lastName}`,
+            mobile,
+            email,
+            funding_table_requested: false,
+            doc_urls: [],
+            loan_type: loanType,
+            loan_size: loanSize,
+            message,
+            source: 'website'
+          })
         });
 
-        if (!res.ok) throw new Error();
+        document.getElementById('enquiryForm').style.display = 'none';
+        document.getElementById('formSuccess').classList.add('on');
 
-        document.getElementById('leadFormCard').style.display = 'none';
-        document.getElementById('successCard').classList.add('visible');
-
-      } catch {
+      } catch (e) {
         btn.disabled = false;
-        btn.innerHTML = 'Submit Request <span class="submit-arrow">→</span>';
-        err.textContent = 'Something went wrong. Please try again or call us directly.';
-        err.classList.add('visible');
+        btn.innerHTML = 'Submit Enquiry →';
+        alert('Something went wrong. Please email us at info@dealt.com.au');
       }
     }
 
-    function showNotFound() {
-      document.getElementById('loadingState').style.display = 'none';
-      document.getElementById('notFound').style.display = 'block';
-    }
+    // Smooth active nav on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
 
-    function fmt(n) {
-      if (!n) return '—';
-      if (n >= 1e6) return `$${(n/1e6).toFixed(2)}M`;
-      if (n >= 1e3) return `$${(n/1e3).toFixed(0)}K`;
-      return `$${n.toLocaleString()}`;
-    }
-
-    init();
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 100) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === `#${current}` ? 'white' : '';
+      });
+    });
   </script>
 </body>
 </html>
