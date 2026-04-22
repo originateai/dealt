@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Dealt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --navy: #0D1B2E; --blue: #175CF5; --blue-light: #D1DEFF;
+      --mid-grey: #BFC5D2; --white: #FFFFFF; --error: #E53935;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Rubik', sans-serif;
+      background: var(--navy);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .wrap { width: 100%; max-width: 400px; }
+    .logo { text-align:center; margin-bottom:32px; }
+    .logo img { height:30px; filter:brightness(0) invert(1); }
+    .logo-fb { font-size:26px; font-weight:700; color:white; letter-spacing:-0.5px; }
+    .card { background:var(--white); border-radius:18px; padding:36px 32px; }
+    .card h1 { font-size:22px; font-weight:700; color:var(--navy); margin-bottom:6px; letter-spacing:-0.3px; }
+    .card p { font-size:13px; color:#69707F; margin-bottom:28px; }
+    .fg { margin-bottom:16px; }
+    .lbl { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:6px; }
+    .inp {
+      width:100%; padding:12px 14px;
+      border:1.5px solid var(--mid-grey); border-radius:9px;
+      font-family:'Rubik',sans-serif; font-size:14px; color:var(--navy);
+      outline:none; transition:border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance:none;
+    }
+    .inp:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(23,92,245,0.1); }
+    .btn {
+      width:100%; padding:14px;
+      background:var(--blue); color:white; border:none; border-radius:9px;
+      font-family:'Rubik',sans-serif; font-size:15px; font-weight:600;
+      cursor:pointer; margin-top:6px;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:background 0.2s, transform 0.15s;
+    }
+    .btn:hover { background:#1350D9; transform:translateY(-1px); }
+    .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+    .err {
+      background:#FFF0F0; color:var(--error);
+      border-radius:8px; padding:10px 13px;
+      font-size:13px; margin-top:12px;
+      border-left:3px solid var(--error);
+      display:none;
+    }
+    .err.on { display:block; }
+    .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.75s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo">
+      <img src="../dealt-logo.png" alt="Dealt" onerror="this.style.display='none';document.getElementById('lf').style.display='block'">
+      <span id="lf" class="logo-fb" style="display:none">dealt</span>
+    </div>
+    <div class="card">
+      <h1>Admin Login</h1>
+      <p>Sign in to access the Dealt admin portal.</p>
+      <div class="fg">
+        <label class="lbl">Email Address</label>
+        <input type="email" class="inp" id="email" placeholder="info@dealt.com.au" autocomplete="email">
+      </div>
+      <div class="fg">
+        <label class="lbl">Password</label>
+        <input type="password" class="inp" id="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+      </div>
+      <button class="btn" id="loginBtn" onclick="login()">Sign In →</button>
+      <div class="err" id="errMsg"></div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const { createClient } = supabase;
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // If already logged in redirect to dashboard
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) window.location.href = 'index.html';
+    });
+
+    async function login() {
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const err      = document.getElementById('errMsg');
+      const btn      = document.getElementById('loginBtn');
+
+      if (!email || !password) {
+        err.textContent = 'Please enter your email and password.';
+        err.classList.add('on'); return;
+      }
+
+      err.classList.remove('on');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> Signing in…';
+
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        btn.disabled = false;
+        btn.innerHTML = 'Sign In →';
+        err.textContent = 'Invalid email or password. Please try again.';
+        err.classList.add('on');
+      } else {
+        window.location.href = 'index.html';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -330,6 +330,24 @@
     @keyframes spin { to { transform:rotate(360deg); } }
     @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
   </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (function() {
+      const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+      const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+      const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      sb.auth.getSession().then(({ data }) => {
+        if (!data.session) window.location.href = 'login.html';
+      });
+      window._sb = sb;
+      window.logout = async function() {
+        await sb.auth.signOut();
+        window.location.href = 'login.html';
+      };
+    })();
+  </script>
+
 </head>
 <body>
 
@@ -363,6 +381,7 @@
         <div>
           <div class="user-name">James Storey</div>
           <div class="user-email">info@dealt.com.au</div>
+        <button onclick="logout()" style="margin-top:10px;width:100%;padding:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:7px;color:rgba(255,255,255,0.5);font-family:Rubik,sans-serif;font-size:12px;cursor:pointer;">Sign Out</button>
         </div>
       </div>
     </div>
