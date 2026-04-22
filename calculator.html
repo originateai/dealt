@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance Calculator | Dealt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:#0D1B2E; --blue:#175CF5; --blue-light:#D1DEFF;
+      --blue-mid:#4A7FF7; --dark-grey:#69707F; --mid-grey:#BFC5D2;
+      --light-bg:#F4F6FC; --white:#FFFFFF; --error:#E53935;
+      --success:#1DB954;
+      --shadow-sm:0 1px 4px rgba(23,92,245,0.08);
+      --shadow-md:0 4px 24px rgba(23,92,245,0.12);
+      --shadow-lg:0 8px 40px rgba(13,27,46,0.15);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Rubik',sans-serif; background:var(--light-bg); color:var(--navy); min-height:100vh; }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      padding:0 40px; height:68px;
+      display:flex; align-items:center; justify-content:space-between;
+      background:rgba(13,27,46,0.97); backdrop-filter:blur(12px);
+    }
+    .nav-logo img { height:26px; filter:brightness(0) invert(1); }
+    .nav-logo-fb { font-size:20px; font-weight:700; color:white; }
+    .nav-back { font-size:13px; font-weight:500; color:rgba(255,255,255,0.6); text-decoration:none; transition:color 0.2s; }
+    .nav-back:hover { color:white; }
+
+    /* HERO */
+    .hero {
+      background:var(--navy);
+      padding:110px 20px 60px;
+      text-align:center;
+      position:relative; overflow:hidden;
+    }
+    .hero::before {
+      content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%);
+      width:800px; height:500px;
+      background:radial-gradient(ellipse, rgba(23,92,245,0.2) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .hero-pill {
+      display:inline-flex; align-items:center; gap:7px;
+      background:rgba(23,92,245,0.15); border:1px solid rgba(23,92,245,0.3);
+      border-radius:20px; padding:6px 16px;
+      font-size:11px; font-weight:700; color:var(--blue-light);
+      letter-spacing:1.5px; text-transform:uppercase; margin-bottom:18px;
+    }
+    .hero-pill span { width:6px; height:6px; background:var(--blue); border-radius:50%; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .hero h1 { font-size:clamp(28px,5vw,52px); font-weight:800; color:white; line-height:1.1; letter-spacing:-1px; margin-bottom:14px; }
+    .hero h1 em { font-style:normal; color:var(--blue-light); }
+    .hero p { font-size:16px; color:rgba(255,255,255,0.6); line-height:1.6; max-width:500px; margin:0 auto; }
+
+    /* MAIN */
+    .main { max-width:780px; margin:0 auto; padding:0 16px 80px; transform:translateY(-32px); }
+
+    /* PROGRESS */
+    .progress-bar {
+      background:var(--white); border-radius:14px; padding:20px 24px;
+      margin-bottom:16px; box-shadow:var(--shadow-sm);
+      display:flex; align-items:center; gap:0;
+    }
+    .step-dot {
+      display:flex; flex-direction:column; align-items:center; gap:4px;
+      flex:1;
+      position:relative;
+    }
+    .step-dot:not(:last-child)::after {
+      content:''; position:absolute; top:14px; left:50%; width:100%; height:2px;
+      background:var(--blue-light); z-index:0;
+    }
+    .step-dot.done:not(:last-child)::after { background:var(--blue); }
+    .dot {
+      width:28px; height:28px; border-radius:50%;
+      background:var(--blue-light); color:var(--blue);
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:700; z-index:1; position:relative;
+      transition:all 0.3s;
+    }
+    .step-dot.active .dot { background:var(--blue); color:white; box-shadow:0 0 0 4px rgba(23,92,245,0.2); }
+    .step-dot.done .dot { background:var(--blue); color:white; }
+    .step-label { font-size:10px; font-weight:600; color:var(--mid-grey); text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+    .step-dot.active .step-label, .step-dot.done .step-label { color:var(--blue); }
+
+    /* CARDS */
+    .card {
+      background:var(--white); border-radius:16px; padding:28px 24px;
+      box-shadow:var(--shadow-sm); margin-bottom:14px;
+      animation:fadeUp 0.35s ease both;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+    .card-title {
+      font-size:16px; font-weight:700; color:var(--navy);
+      margin-bottom:20px; letter-spacing:-0.2px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .card-title svg { width:18px; height:18px; color:var(--blue); }
+
+    /* PROPERTY ADDRESS */
+    .address-wrap { position:relative; }
+    .address-input {
+      width:100%; padding:14px 16px 14px 46px;
+      border:1.5px solid var(--mid-grey); border-radius:10px;
+      font-family:'Rubik',sans-serif; font-size:15px; color:var(--navy);
+      outline:none; transition:border-color 0.2s, box-shadow 0.2s;
+      background:var(--white);
+    }
+    .address-input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(23,92,245,0.1); }
+    .address-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); }
+    .address-icon svg { width:18px; height:18px; color:var(--blue); }
+
+    /* MAP PREVIEW */
+    .map-preview {
+      margin-top:12px; border-radius:10px; overflow:hidden;
+      height:160px; background:var(--light-bg);
+      display:none; position:relative;
+    }
+    .map-preview.visible { display:block; }
+    .map-preview img { width:100%; height:100%; object-fit:cover; }
+    .map-address-tag {
+      position:absolute; bottom:8px; left:8px; right:8px;
+      background:rgba(13,27,46,0.85); backdrop-filter:blur(8px);
+      border-radius:8px; padding:8px 12px;
+      font-size:12px; font-weight:500; color:white;
+    }
+
+    /* LOAN TYPE GRID */
+    .loan-type-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .loan-type-btn {
+      border:1.5px solid var(--mid-grey); border-radius:10px;
+      padding:12px 8px; text-align:center; cursor:pointer;
+      transition:all 0.15s; background:var(--white);
+    }
+    .loan-type-btn:hover { border-color:var(--blue); background:#F0F5FF; }
+    .loan-type-btn.selected { border-color:var(--blue); background:#F0F5FF; }
+    .loan-type-btn .lt-icon { width:44px; height:44px; margin:0 auto 8px; display:flex; align-items:center; justify-content:center; }
+    .loan-type-btn .lt-icon img { width:44px; height:44px; object-fit:contain; border-radius:8px; }
+    .loan-type-btn .lt-name { font-size:11px; font-weight:600; color:var(--navy); line-height:1.3; }
+    .loan-type-btn.selected .lt-name { color:var(--blue); }
+
+    /* INPUTS */
+    .row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .fg { margin-bottom:14px; }
+    .fg:last-child { margin-bottom:0; }
+    .lbl { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:5px; }
+    .inp, .sel {
+      width:100%; padding:11px 14px;
+      border:1.5px solid var(--mid-grey); border-radius:9px;
+      font-family:'Rubik',sans-serif; font-size:14px; color:var(--navy);
+      background:var(--white); outline:none;
+      transition:border-color 0.2s, box-shadow 0.2s; -webkit-appearance:none;
+    }
+    .inp:focus, .sel:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(23,92,245,0.1); }
+    .input-wrap { position:relative; }
+    .pre { position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--dark-grey); pointer-events:none; }
+    .suf { position:absolute; right:13px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--dark-grey); pointer-events:none; }
+    .inp.has-pre { padding-left:24px; }
+    .inp.has-suf { padding-right:36px; }
+
+    /* RESULTS */
+    .results-card {
+      background:var(--navy); border-radius:16px; padding:28px 24px;
+      box-shadow:var(--shadow-lg); margin-bottom:14px;
+      display:none; animation:fadeUp 0.4s ease both;
+    }
+    .results-card.visible { display:block; }
+
+    .results-header {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:20px; padding-bottom:16px;
+      border-bottom:1px solid rgba(255,255,255,0.1);
+    }
+    .results-title { font-size:15px; font-weight:700; color:white; }
+    .results-badge {
+      background:rgba(23,92,245,0.3); color:var(--blue-light);
+      border-radius:20px; padding:4px 10px;
+      font-size:11px; font-weight:700; letter-spacing:0.5px;
+    }
+
+    .metrics-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+    .metric {
+      background:rgba(255,255,255,0.06); border-radius:10px; padding:14px 12px;
+    }
+    .metric-lbl { font-size:10px; font-weight:600; color:var(--blue-light); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px; }
+    .metric-val { font-size:24px; font-weight:700; color:white; letter-spacing:-0.5px; }
+    .metric-sub { font-size:11px; color:rgba(255,255,255,0.4); margin-top:3px; }
+
+    .lender-rows { display:flex; flex-direction:column; gap:8px; }
+    .lender-row {
+      background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px;
+      display:flex; align-items:center; gap:12px;
+    }
+    .lender-type { font-size:13px; font-weight:600; color:white; flex:1; }
+    .lender-badge { font-size:10px; font-weight:700; color:var(--blue-light); background:rgba(23,92,245,0.2); padding:2px 7px; border-radius:4px; margin-left:6px; }
+    .lender-rate { font-size:15px; font-weight:700; color:white; }
+    .lender-lvr { font-size:12px; color:rgba(255,255,255,0.5); margin-left:12px; }
+
+    .disclaimer {
+      font-size:11px; color:rgba(255,255,255,0.35); margin-top:14px; line-height:1.5;
+      padding-top:14px; border-top:1px solid rgba(255,255,255,0.08);
+    }
+
+    /* LEAD CAPTURE */
+    .lead-card { background:var(--white); border-radius:16px; padding:28px 24px; box-shadow:var(--shadow-sm); display:none; animation:fadeUp 0.4s ease both; }
+    .lead-card.visible { display:block; }
+    .lead-header h3 { font-size:18px; font-weight:700; color:var(--navy); margin-bottom:6px; letter-spacing:-0.2px; }
+    .lead-header p { font-size:13px; color:var(--dark-grey); margin-bottom:22px; line-height:1.5; }
+
+    .submit-btn {
+      width:100%; padding:15px; background:var(--blue); color:white; border:none;
+      border-radius:10px; font-family:'Rubik',sans-serif; font-size:15px; font-weight:600;
+      cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:background 0.2s, transform 0.15s, box-shadow 0.2s; margin-top:6px;
+    }
+    .submit-btn:hover { background:#1350D9; transform:translateY(-1px); box-shadow:0 6px 20px rgba(23,92,245,0.35); }
+    .submit-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .err { background:#FFF0F0; color:var(--error); border-radius:8px; padding:10px 13px; font-size:13px; margin-top:10px; border-left:3px solid var(--error); display:none; }
+    .err.on { display:block; }
+
+    /* SUCCESS */
+    .success-wrap { text-align:center; padding:32px 20px; display:none; }
+    .success-wrap.on { display:block; }
+    .success-icon { width:60px; height:60px; background:#E6F9ED; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; }
+    .success-icon svg { width:26px; height:26px; color:var(--success); }
+    .success-title { font-size:20px; font-weight:700; color:var(--navy); margin-bottom:8px; letter-spacing:-0.3px; }
+    .success-sub { font-size:14px; color:var(--dark-grey); line-height:1.65; }
+
+    /* CTA BUTTON */
+    .calc-btn {
+      width:100%; padding:15px; background:var(--blue); color:white; border:none;
+      border-radius:10px; font-family:'Rubik',sans-serif; font-size:15px; font-weight:600;
+      cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:all 0.2s; margin-top:6px;
+    }
+    .calc-btn:hover { background:#1350D9; transform:translateY(-1px); box-shadow:0 6px 20px rgba(23,92,245,0.35); }
+    .calc-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.75s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    footer { background:var(--navy); padding:24px 40px; text-align:center; font-size:12px; color:rgba(255,255,255,0.3); }
+    footer a { color:rgba(255,255,255,0.4); text-decoration:none; }
+
+    @media(max-width:600px) {
+      nav { padding:0 16px; }
+      .loan-type-grid { grid-template-columns:repeat(2,1fr); }
+      .metrics-row { grid-template-columns:1fr 1fr; }
+      .row2 { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <img src="dealt-logo.png" alt="Dealt" onerror="this.style.display='none';document.getElementById('nlfb').style.display='block'">
+      <span id="nlfb" class="nav-logo-fb" style="display:none">dealt</span>
+    </a>
+    <a href="index.html" class="nav-back">← Back to Dealt</a>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-pill"><span></span>Finance Calculator</div>
+    <h1>Get your <em>indicative</em><br>finance estimate instantly</h1>
+    <p>Enter your property address and loan details to see what's available in the market right now.</p>
+  </div>
+
+  <div class="main">
+
+    <!-- PROGRESS -->
+    <div class="progress-bar">
+      <div class="step-dot active" id="step1dot">
+        <div class="dot">1</div>
+        <div class="step-label">Property</div>
+      </div>
+      <div class="step-dot" id="step2dot">
+        <div class="dot">2</div>
+        <div class="step-label">Loan Details</div>
+      </div>
+      <div class="step-dot" id="step3dot">
+        <div class="dot">3</div>
+        <div class="step-label">Your Results</div>
+      </div>
+      <div class="step-dot" id="step4dot">
+        <div class="dot">4</div>
+        <div class="step-label">Get in Touch</div>
+      </div>
+    </div>
+
+    <!-- STEP 1: PROPERTY -->
+    <div class="card" id="step1card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Property Address
+      </div>
+      <div class="address-wrap">
+        <div class="address-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <input type="text" class="address-input" id="addressInput" placeholder="Start typing your property address…" autocomplete="off">
+      </div>
+      <div class="map-preview" id="mapPreview">
+        <img id="mapImg" src="" alt="Property map">
+        <div class="map-address-tag" id="mapAddressTag"></div>
+      </div>
+
+      <div style="margin-top:20px">
+        <div class="card-title" style="margin-bottom:14px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Property Type
+        </div>
+        <div class="loan-type-grid">
+          <div class="loan-type-btn" onclick="selectPropType(this,'Residential')" data-value="Residential">
+            <div class="lt-icon"><img src="images/Development @3x.png" alt="Residential"></div>
+            <div class="lt-name">Residential</div>
+          </div>
+          <div class="loan-type-btn" onclick="selectPropType(this,'Commercial')" data-value="Commercial">
+            <div class="lt-icon"><img src="images/Investment.png" alt="Commercial"></div>
+            <div class="lt-name">Commercial</div>
+          </div>
+          <div class="loan-type-btn" onclick="selectPropType(this,'Industrial')" data-value="Industrial">
+            <div class="lt-icon"><img src="images/Site.png" alt="Industrial"></div>
+            <div class="lt-name">Industrial</div>
+          </div>
+          <div class="loan-type-btn" onclick="selectPropType(this,'Land')" data-value="Land">
+            <div class="lt-icon"><img src="images/Land Subdivision.png" alt="Land"></div>
+            <div class="lt-name">Land</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="calc-btn" id="step1btn" onclick="goStep2()" style="margin-top:20px" disabled>
+        Continue → Loan Details
+      </button>
+    </div>
+
+    <!-- STEP 2: LOAN DETAILS -->
+    <div class="card" id="step2card" style="display:none">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Loan Details
+      </div>
+
+      <div class="fg">
+        <label class="lbl">Finance Type *</label>
+        <select class="sel" id="loanType" onchange="updateCalc()">
+          <option value="">Select loan type…</option>
+          <option value="Development Finance">Development Finance</option>
+          <option value="Investment Finance">Investment Finance</option>
+          <option value="Construction Loan">Construction Loan</option>
+          <option value="Site Finance">Site Finance</option>
+          <option value="Bridging Finance">Bridging Finance</option>
+          <option value="Land Subdivision">Land Subdivision</option>
+          <option value="Mezzanine Finance">Mezzanine Finance</option>
+          <option value="SMSF Finance">SMSF Finance</option>
+        </select>
+      </div>
+
+      <div class="row2">
+        <div class="fg">
+          <label class="lbl">Security Value *</label>
+          <div class="input-wrap">
+            <span class="pre">$</span>
+            <input type="number" class="inp has-pre" id="securityValue" placeholder="5,000,000" oninput="updateCalc()">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Loan Amount *</label>
+          <div class="input-wrap">
+            <span class="pre">$</span>
+            <input type="number" class="inp has-pre" id="loanAmount" placeholder="3,250,000" oninput="updateCalc()">
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="fg">
+          <label class="lbl">Loan Term</label>
+          <div class="input-wrap">
+            <input type="number" class="inp has-suf" id="loanTerm" placeholder="12" value="12" oninput="updateCalc()">
+            <span class="suf">months</span>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Location Type</label>
+          <select class="sel" id="locationType" onchange="updateCalc()">
+            <option value="metro">Metro</option>
+            <option value="regional">Regional</option>
+            <option value="rural">Rural</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calc-btn" id="step2btn" onclick="calculateRates()" disabled>
+        Calculate My Rates →
+      </button>
+    </div>
+
+    <!-- STEP 3: RESULTS -->
+    <div class="results-card" id="resultsCard">
+      <div class="results-header">
+        <div class="results-title">Your Indicative Rates</div>
+        <div class="results-badge">LIVE MARKET</div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric">
+          <div class="metric-lbl">Rate From</div>
+          <div class="metric-val" id="rRate">—</div>
+          <div class="metric-sub">p.a. indicative</div>
+        </div>
+        <div class="metric">
+          <div class="metric-lbl">Max LVR</div>
+          <div class="metric-val" id="rLvr">—</div>
+          <div class="metric-sub">loan to value</div>
+        </div>
+        <div class="metric">
+          <div class="metric-lbl">Est. Interest</div>
+          <div class="metric-val" id="rInterest">—</div>
+          <div class="metric-sub" id="rInterestSub">over term</div>
+        </div>
+      </div>
+
+      <div class="lender-rows" id="lenderRows"></div>
+
+      <div class="disclaimer">
+        * Indicative rates only. Subject to credit assessment, valuation and lender approval. Rates current as at today's date and may change without notice. Dealt does not guarantee approval or the rates shown.
+      </div>
+    </div>
+
+    <!-- STEP 4: LEAD CAPTURE -->
+    <div class="lead-card" id="leadCard">
+      <div id="leadForm">
+        <div class="lead-header">
+          <h3>Get your full funding table</h3>
+          <p>Enter your details and one of our team will send you a personalised funding table with lender-specific rates, fees, and terms for your deal.</p>
+        </div>
+
+        <div class="row2">
+          <div class="fg">
+            <label class="lbl">First Name *</label>
+            <input type="text" class="inp" id="firstName" placeholder="James">
+          </div>
+          <div class="fg">
+            <label class="lbl">Last Name *</label>
+            <input type="text" class="inp" id="lastName" placeholder="Storey">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Email Address *</label>
+          <input type="email" class="inp" id="leadEmail" placeholder="james@example.com">
+        </div>
+        <div class="fg">
+          <label class="lbl">Mobile Number *</label>
+          <input type="tel" class="inp" id="leadMobile" placeholder="0400 000 000">
+        </div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitLead()">
+          Send Me My Funding Table →
+        </button>
+        <div class="err" id="errMsg"></div>
+      </div>
+
+      <div class="success-wrap" id="successWrap">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="success-title">You're all set!</div>
+        <p class="success-sub">Thanks! One of our team will be in touch shortly with your personalised funding table and a full breakdown of available lenders for your deal.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>© 2025 Dealt Pty Ltd · <a href="mailto:info@dealt.com.au">info@dealt.com.au</a></footer>
+
+  <!-- Google Maps Places API -->
+  <script>
+    // State
+    let selectedAddress = '';
+    let selectedPropType = '';
+    let calcData = {};
+    let googleMapsKey = '';
+
+    // Fetch config from Netlify function
+    async function initConfig() {
+      try {
+        const res = await fetch('/.netlify/functions/get-config');
+        const config = await res.json();
+        googleMapsKey = config.googleMapsKey || '';
+        if (googleMapsKey) loadGoogleMaps();
+      } catch(e) {
+        // No maps key — address still works manually
+      }
+    }
+
+    function loadGoogleMaps() {
+      if (!googleMapsKey) return;
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsKey}&libraries=places&callback=initAutocomplete`;
+      script.async = true;
+      document.head.appendChild(script);
+    }
+
+    function initAutocomplete() {
+      const input = document.getElementById('addressInput');
+      const autocomplete = new google.maps.places.Autocomplete(input, {
+        componentRestrictions: { country: 'au' },
+        types: ['address']
+      });
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        if (place.formatted_address) {
+          selectedAddress = place.formatted_address;
+          showMapPreview(selectedAddress);
+          checkStep1();
+        }
+      });
+    }
+
+    // Manual address entry fallback
+    document.getElementById('addressInput').addEventListener('input', function() {
+      selectedAddress = this.value;
+      checkStep1();
+    });
+
+    document.getElementById('addressInput').addEventListener('blur', function() {
+      if (this.value.length > 5) {
+        selectedAddress = this.value;
+        showMapPreview(this.value);
+      }
+    });
+
+    function showMapPreview(address) {
+      if (!googleMapsKey) return;
+      const mapImg = document.getElementById('mapImg');
+      const preview = document.getElementById('mapPreview');
+      const tag = document.getElementById('mapAddressTag');
+      mapImg.src = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=16&size=780x160&maptype=satellite&key=${googleMapsKey}`;
+      tag.textContent = address;
+      preview.classList.add('visible');
+    }
+
+    function selectPropType(el, type) {
+      document.querySelectorAll('.loan-type-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedPropType = type;
+      checkStep1();
+    }
+
+    function checkStep1() {
+      const btn = document.getElementById('step1btn');
+      btn.disabled = !(selectedAddress.length > 5 && selectedPropType);
+    }
+
+    function goStep2() {
+      document.getElementById('step2card').style.display = 'block';
+      document.getElementById('step2card').scrollIntoView({ behavior:'smooth', block:'start' });
+      setStep(2);
+    }
+
+    function updateCalc() {
+      const loanType = document.getElementById('loanType').value;
+      const sec = parseFloat(document.getElementById('securityValue').value);
+      const loan = parseFloat(document.getElementById('loanAmount').value);
+      document.getElementById('step2btn').disabled = !(loanType && sec && loan);
+    }
+
+    // RATE ENGINE — JSON-based rules
+    const RATE_RULES = {
+      'Development Finance':  { bankRate: 6.5,  nonBankRate: 8.2,  bankLvr: 65, nonBankLvr: 75, mezz: true },
+      'Investment Finance':   { bankRate: 6.2,  nonBankRate: 7.8,  bankLvr: 70, nonBankLvr: 75, mezz: false },
+      'Construction Loan':    { bankRate: 6.8,  nonBankRate: 8.5,  bankLvr: 65, nonBankLvr: 70, mezz: true },
+      'Site Finance':         { bankRate: 7.2,  nonBankRate: 9.0,  bankLvr: 60, nonBankLvr: 70, mezz: false },
+      'Bridging Finance':     { bankRate: 8.5,  nonBankRate: 12.0, bankLvr: 65, nonBankLvr: 80, mezz: false },
+      'Land Subdivision':     { bankRate: 7.5,  nonBankRate: 9.5,  bankLvr: 60, nonBankLvr: 70, mezz: true },
+      'Mezzanine Finance':    { bankRate: 15.0, nonBankRate: 22.0, bankLvr: 80, nonBankLvr: 90, mezz: false },
+      'SMSF Finance':         { bankRate: 6.5,  nonBankRate: 7.5,  bankLvr: 70, nonBankLvr: 75, mezz: false },
+    };
+
+    function calculateRates() {
+      const loanType = document.getElementById('loanType').value;
+      const sec = parseFloat(document.getElementById('securityValue').value);
+      const loan = parseFloat(document.getElementById('loanAmount').value);
+      const term = parseInt(document.getElementById('loanTerm').value) || 12;
+      const location = document.getElementById('locationType').value;
+
+      const rules = RATE_RULES[loanType] || { bankRate: 7.0, nonBankRate: 9.0, bankLvr: 65, nonBankLvr: 75 };
+
+      // Adjust for location
+      const locationAdj = location === 'regional' ? 0.5 : location === 'rural' ? 1.0 : 0;
+      const lvr = sec ? Math.round((loan / sec) * 100) : 0;
+
+      calcData = {
+        loanType, sec, loan, term, lvr,
+        bankRate: rules.bankRate + locationAdj,
+        nonBankRate: rules.nonBankRate + locationAdj,
+        bankLvr: rules.bankLvr,
+        nonBankLvr: rules.nonBankLvr,
+        mezz: rules.mezz,
+      };
+
+      // Render results
+      const bestRate = calcData.bankRate;
+      const maxLvr = calcData.nonBankLvr;
+      const interest = loan * (bestRate / 100) * (term / 12);
+
+      document.getElementById('rRate').textContent = `${bestRate.toFixed(2)}%`;
+      document.getElementById('rLvr').textContent = `${maxLvr}%`;
+      document.getElementById('rInterest').textContent = fmt(interest);
+      document.getElementById('rInterestSub').textContent = `over ${term} months`;
+
+      // Lender rows
+      const rows = [
+        { type: 'Major Bank', badge: 'Lowest Rate', rate: calcData.bankRate, lvr: calcData.bankLvr },
+        { type: 'Tier 2 Bank', badge: '', rate: calcData.bankRate + 0.5, lvr: calcData.bankLvr + 5 },
+        { type: 'Non-Bank Lender', badge: 'Higher LVR', rate: calcData.nonBankRate, lvr: calcData.nonBankLvr },
+      ];
+
+      if (calcData.mezz) {
+        rows.push({ type: 'Mezzanine', badge: 'Up to 90% LTC', rate: calcData.nonBankRate + 5, lvr: 90 });
+      }
+
+      document.getElementById('lenderRows').innerHTML = rows.map(r => `
+        <div class="lender-row">
+          <div class="lender-type">${r.type}${r.badge ? `<span class="lender-badge">${r.badge}</span>` : ''}</div>
+          <div class="lender-rate">${r.rate.toFixed(2)}%</div>
+          <div class="lender-lvr">LVR ${r.lvr}%</div>
+        </div>
+      `).join('');
+
+      document.getElementById('resultsCard').classList.add('visible');
+      document.getElementById('leadCard').classList.add('visible');
+      document.getElementById('resultsCard').scrollIntoView({ behavior:'smooth', block:'start' });
+      setStep(3);
+    }
+
+    async function submitLead() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName  = document.getElementById('lastName').value.trim();
+      const email     = document.getElementById('leadEmail').value.trim();
+      const mobile    = document.getElementById('leadMobile').value.trim();
+      const err       = document.getElementById('errMsg');
+
+      if (!firstName || !lastName || !email || !mobile) {
+        err.textContent = 'Please fill in all required fields.';
+        err.classList.add('on'); return;
+      }
+
+      err.classList.remove('on');
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div>&nbsp;Submitting…';
+
+      try {
+        await fetch('/.netlify/functions/submit-lead', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            deal_id: null,
+            name: `${firstName} ${lastName}`,
+            mobile, email,
+            loan_type: calcData.loanType,
+            loan_size: fmt(calcData.loan),
+            message: `Property: ${selectedAddress}\nProperty Type: ${selectedPropType}\nSecurity Value: ${fmt(calcData.sec)}\nLoan Amount: ${fmt(calcData.loan)}\nLVR: ${calcData.lvr}%\nTerm: ${calcData.term} months\nBest Rate: ${calcData.bankRate}%`,
+            source: 'calculator',
+            funding_table_requested: true,
+            doc_urls: []
+          })
+        });
+
+        document.getElementById('leadForm').style.display = 'none';
+        document.getElementById('successWrap').classList.add('on');
+        setStep(4);
+
+      } catch(e) {
+        btn.disabled = false;
+        btn.innerHTML = 'Send Me My Funding Table →';
+        err.textContent = 'Something went wrong. Please email info@dealt.com.au';
+        err.classList.add('on');
+      }
+    }
+
+    function setStep(n) {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById(`step${i}dot`);
+        dot.classList.remove('active','done');
+        if (i < n) dot.classList.add('done');
+        if (i === n) dot.classList.add('active');
+      }
+    }
+
+    function fmt(n) {
+      if (!n) return '—';
+      if (n >= 1e6) return `$${(n/1e6).toFixed(2)}M`;
+      if (n >= 1e3) return `$${(n/1e3).toFixed(0)}K`;
+      return `$${n.toLocaleString()}`;
+    }
+
+    // Update get-config to also return Google Maps key
+    initConfig();
+  </script>
+</body>
+</html>
