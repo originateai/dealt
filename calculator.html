@@ -243,6 +243,25 @@
     .calc-btn:hover { background:#1350D9; transform:translateY(-1px); box-shadow:0 6px 20px rgba(23,92,245,0.35); }
     .calc-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
 
+
+    /* UPLOAD */
+    .upload-area {
+      border:1.5px dashed var(--mid-grey); border-radius:10px;
+      padding:16px; cursor:pointer; transition:all 0.2s;
+      position:relative; text-align:center;
+    }
+    .upload-area:hover,.upload-area.dragging { border-color:var(--blue); background:#F0F5FF; }
+    .upload-area input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+    .upload-inner { display:flex; flex-direction:column; align-items:center; gap:4px; pointer-events:none; }
+    .upload-inner svg { color:var(--blue); margin-bottom:4px; }
+    .upload-title { font-size:14px; font-weight:600; color:var(--navy); }
+    .upload-sub { font-size:11px; color:var(--dark-grey); }
+    .file-list { margin-top:8px; display:flex; flex-direction:column; gap:5px; text-align:left; }
+    .file-pill { background:var(--light-bg); border-radius:7px; padding:7px 10px; display:flex; align-items:center; gap:8px; font-size:12px; }
+    .file-pill-name { flex:1; color:var(--navy); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .file-pill-size { color:var(--dark-grey); }
+    .file-pill-rm { cursor:pointer; color:var(--mid-grey); font-size:16px; line-height:1; transition:color 0.15s; }
+    .file-pill-rm:hover { color:var(--error); }
     .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.75s linear infinite; }
     @keyframes spin { to { transform:rotate(360deg); } }
 
@@ -484,6 +503,36 @@
 
   <!-- Google Maps Places API -->
   <script>
+
+    // File upload
+    let uploadedFiles = [];
+
+    function handleFiles(files) {
+      for (const f of files) {
+        if (!uploadedFiles.find(x => x.name === f.name)) uploadedFiles.push(f);
+      }
+      renderFiles();
+    }
+
+    function renderFiles() {
+      document.getElementById('fileList').innerHTML = uploadedFiles.map((f,i) => `
+        <div class="file-pill">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#175CF5" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span class="file-pill-name">${f.name}</span>
+          <span class="file-pill-size">${(f.size/1024).toFixed(0)}KB</span>
+          <span class="file-pill-rm" onclick="removeFile(${i})">×</span>
+        </div>`).join('');
+    }
+
+    function removeFile(i) { uploadedFiles.splice(i,1); renderFiles(); }
+
+    const ua = document.getElementById('uploadArea');
+    if (ua) {
+      ua.addEventListener('dragover', e => { e.preventDefault(); ua.classList.add('dragging'); });
+      ua.addEventListener('dragleave', () => ua.classList.remove('dragging'));
+      ua.addEventListener('drop', e => { e.preventDefault(); ua.classList.remove('dragging'); handleFiles(e.dataTransfer.files); });
+    }
+
     // State
     let selectedAddress = '';
     let selectedPropType = '';
@@ -661,6 +710,18 @@
       btn.innerHTML = '<div class="spinner"></div>&nbsp;Submitting…';
 
       try {
+        // Upload docs first if any
+        let docUrls = [];
+        if (uploadedFiles.length) {
+          const fd = new FormData();
+          uploadedFiles.forEach(f => fd.append('files', f));
+          fd.append('deal_id', 'calculator');
+          try {
+            const ur = await fetch('/.netlify/functions/upload-doc', { method:'POST', body:fd });
+            docUrls = (await ur.json()).urls || [];
+          } catch(e) { console.log('Doc upload failed, continuing'); }
+        }
+
         await fetch('/.netlify/functions/submit-lead', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
@@ -673,7 +734,7 @@
             message: `Property: ${selectedAddress}\nProperty Type: ${selectedPropType}\nSecurity Value: ${fmt(calcData.sec)}\nLoan Amount: ${fmt(calcData.loan)}\nLVR: ${calcData.lvr}%\nTerm: ${calcData.term} months\nBest Rate: ${calcData.bankRate}%`,
             source: 'calculator',
             funding_table_requested: true,
-            doc_urls: []
+            doc_urls: docUrls
           })
         });
 

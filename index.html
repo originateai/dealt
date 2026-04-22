@@ -888,7 +888,7 @@
       <li><a href="#loan-types">Loan Types</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="lenders.html">For Lenders</a></li>
-      <li><a href="#enquire" class="nav-cta">Get Started</a></li>
+      <li><a href="calculator.html" class="nav-cta">Get Instant Rates</a></li>
     </ul>
   </nav>
 
@@ -906,7 +906,7 @@
       <h1>Smarter capital.<br><em>Better outcomes.</em></h1>
       <p class="hero-sub">Dealt structures and places commercial real estate finance across all asset classes — from development and construction to investment and bridging. Independent advice. Competitive terms. Delivered.</p>
       <div class="hero-actions">
-        <a href="#enquire" class="btn-primary">Start Your Enquiry →</a>
+        <a href="calculator.html" class="btn-primary">Start Your Enquiry →</a>
         <a href="#how-it-works" class="btn-ghost">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
           How It Works
@@ -1203,114 +1203,19 @@
     </div>
   </section>
 
-  <!-- ENQUIRY FORM -->
-  <section class="enquiry-section" id="enquire">
-    <div class="section-inner">
-      <div class="section-eyebrow">Get Started</div>
-      <div class="section-title">Discuss your next deal</div>
-      <p class="section-sub">Tell us about your project and we'll come back to you within 24 hours with an indicative view on structure, lenders and terms.</p>
-      <div class="enquiry-grid">
-        <div>
-          <div class="enquiry-points">
-            <div class="enquiry-point">
-              <div class="eq-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-              </div>
-              <div>
-                <div class="eq-title">Independent credit assessment</div>
-                <div class="eq-sub">We review your deal and provide an honest view on structure, gearing and likely lender appetite.</div>
-              </div>
-            </div>
-            <div class="enquiry-point">
-              <div class="eq-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-              </div>
-              <div>
-                <div class="eq-title">Direct lender access</div>
-                <div class="eq-sub">We place your deal with the right lenders from our panel of 50+ bank and non-bank institutions.</div>
-              </div>
-            </div>
-            <div class="enquiry-point">
-              <div class="eq-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <div>
-                <div class="eq-title">From term sheet to settlement</div>
-                <div class="eq-sub">We manage the entire process — structuring, negotiation, documentation and settlement support.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-card">
-          <h3>Enquire Now</h3>
-          <p class="form-sub">We'll respond within 24 hours with an indicative view on your deal.</p>
-
-          <div id="enquiryForm">
-            <div class="row2">
-              <div class="fg">
-                <label class="lbl">First Name *</label>
-                <input type="text" class="inp" id="firstName" placeholder="James">
-              </div>
-              <div class="fg">
-                <label class="lbl">Last Name *</label>
-                <input type="text" class="inp" id="lastName" placeholder="Storey">
-              </div>
-            </div>
-            <div class="fg">
-              <label class="lbl">Email Address *</label>
-              <input type="email" class="inp" id="email" placeholder="james@example.com">
-            </div>
-            <div class="fg">
-              <label class="lbl">Mobile Number *</label>
-              <input type="tel" class="inp" id="mobile" placeholder="0400 000 000">
-            </div>
-            <div class="fg">
-              <label class="lbl">Loan Type *</label>
-              <select class="sel" id="loanType">
-                <option value="">Select loan type…</option>
-                <option>Development Finance</option>
-                <option>Investment Finance</option>
-                <option>Site Finance</option>
-                <option>Bridging Finance</option>
-                <option>Land Subdivision</option>
-                <option>Residual Stock</option>
-                <option>Mezzanine / Private Equity</option>
-                <option>SMSF Finance</option>
-              </select>
-            </div>
-            <div class="fg">
-              <label class="lbl">Loan Amount *</label>
-              <select class="sel" id="loanSize">
-                <option value="">Select range…</option>
-                <option>$100K – $500K</option>
-                <option>$500K – $2M</option>
-                <option>$2M – $10M</option>
-                <option>$10M – $50M</option>
-                <option>$50M – $250M</option>
-                <option>$250M+</option>
-              </select>
-            </div>
-            <div class="fg">
-              <label class="lbl">Tell us about your project</label>
-              <textarea class="ta" id="message" placeholder="Brief description of your property, location, and what you're looking to achieve…"></textarea>
-            </div>
-            <button class="submit-btn" id="submitBtn" onclick="submitEnquiry()">
-              Submit Enquiry <span id="btnArrow">→</span>
-            </button>
-          </div>
-
-          <div class="form-success" id="formSuccess">
-            <div class="success-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="success-title">Enquiry Received!</div>
-            <p class="success-sub">Thanks! One of our team will be in touch within 24 hours to discuss your project.</p>
-          </div>
-        </div>
-      </div>
+  <!-- CTA SECTION -->
+  <section style="background:var(--blue);padding:80px 40px;text-align:center">
+    <div style="max-width:600px;margin:0 auto">
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px">Get Started Today</div>
+      <h2 style="font-size:clamp(28px,4vw,44px);font-weight:800;color:white;letter-spacing:-0.8px;line-height:1.1;margin-bottom:16px">Ready to get dealt?</h2>
+      <p style="font-size:17px;color:rgba(255,255,255,0.75);line-height:1.65;margin-bottom:32px">Get your indicative rates in under 2 minutes. No obligation, no credit check.</p>
+      <a href="calculator.html" style="display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:white;color:var(--blue);border-radius:10px;font-family:Rubik,sans-serif;font-size:16px;font-weight:700;text-decoration:none;transition:all 0.2s;box-shadow:0 8px 32px rgba(0,0,0,0.15)">
+        Get Instant Rates →
+      </a>
     </div>
   </section>
+
+    </section>
 
   <!-- FOOTER -->
   <footer>
@@ -1334,7 +1239,7 @@
           <a href="#about">About Dealt</a>
           <a href="#how-it-works">How It Works</a>
           <a href="#lenders">For Lenders</a>
-          <a href="#enquire">Contact Us</a>
+          <a href="calculator.html">Contact Us</a>
         </div>
         <div class="footer-col">
           <h4>Contact</h4>
